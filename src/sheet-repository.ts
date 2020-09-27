@@ -1,7 +1,4 @@
 type Header = {
-  名称: number;
-  スタイル: number;
-  参照: number;
   [title: string]: number;
 };
 
