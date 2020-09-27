@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+  <title>TNX Search Engine</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue" defer></script>
+  <script src="./index.js" defer></script>
+</head>
+<body>
+  <h1>トーキョーN◎VA データ検索</h1>
+  <div id="app">
+    <input v-model="query" />
+    <button v-on:click="search">検索</button>
+    <div>{{error}}</div>
+    <table>
+      <tr>
+        <th>名称</th>
+        <th>スタイル</th>
+        <th>参照</th>
+      </tr>
+      <tr v-for="skill in skills">
+        <td v-if="skill.ruby === ''">{{skill.name}}</td>
+        <td v-if="skill.ruby !== ''">
+          <ruby
+            ><rb>{{skill.name}}</rb><rp>（</rp><rt>{{skill.ruby}}</rt
+            ><rp>）</rp></ruby
+          >
+        </td>
+        <td>{{skill.style}}</td>
+        <td>{{skill.reference}}</td>
+      </tr>
+    </table>
+  </div>
+</body>
