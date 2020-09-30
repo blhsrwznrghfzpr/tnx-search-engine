@@ -2,9 +2,11 @@ import { SheetRepository } from './sheet-repository';
 import { containWords, groupBy } from './util';
 
 export interface Skill {
+  id: number;
   name: string;
   ruby: string;
   style: string;
+  category: string;
   reference: string;
 }
 
@@ -20,17 +22,17 @@ export class SkillSearchService {
       .filter(row => containWords(row, words))
       .map(
         (row): Skill => {
-          const style = row[header['スタイル']];
-          const category = row[header['カテゴリ']];
           return {
+            id: parseInt(row[header['ID']]),
             name: row[header['名称']],
             ruby: row[header['別読み']],
-            style: category ? `${style}：${category}` : style,
+            style: row[header['スタイル']],
+            category: row[header['カテゴリ']],
             reference: row[header['参照']]
           };
         }
       );
-    return groupBy(result, val => `${val.name}+${val.ruby}+${val.style}`).map(
+    return groupBy(result, val => `${val.name}+${val.ruby}+${val.style}+${val.category}`).map(
       (group): Skill => {
         return {
           ...group[0],

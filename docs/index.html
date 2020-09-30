@@ -24,7 +24,10 @@
             ><rp>）</rp></ruby
           >
         </td>
-        <td>{{skill.style}}</td>
+        <td v-if="skill.category === ''">{{skill.style}}</td>
+        <td v-if="skill.category !== ''">
+          {{skill.style}}：{{skill.category}}
+        </td>
         <td>{{skill.reference}}</td>
       </tr>
     </table>
