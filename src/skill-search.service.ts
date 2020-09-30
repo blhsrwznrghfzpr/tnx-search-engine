@@ -1,4 +1,5 @@
 import { SheetRepository } from './sheet-repository';
+import { containWords, groupBy } from './util';
 
 export interface Skill {
   name: string;
@@ -15,21 +16,27 @@ export class SkillSearchService {
     const header = sheetData.header;
 
     const words = query.split(/\s+/g);
-    return sheetData.content
-      .filter(row => SkillSearchService.containWords(row, words))
-      .map(row => {
-        const style = row[header['スタイル']];
-        const category = row[header['カテゴリ']];
+    const result = sheetData.content
+      .filter(row => containWords(row, words))
+      .map(
+        (row): Skill => {
+          const style = row[header['スタイル']];
+          const category = row[header['カテゴリ']];
+          return {
+            name: row[header['名称']],
+            ruby: row[header['別読み']],
+            style: category ? `${style}：${category}` : style,
+            reference: row[header['参照']]
+          };
+        }
+      );
+    return groupBy(result, val => `${val.name}+${val.ruby}+${val.style}`).map(
+      (group): Skill => {
         return {
-          name: row[header['名称']],
-          ruby: row[header['別読み']],
-          style: category ? `${style}：${category}` : style,
-          reference: row[header['参照']]
+          ...group[0],
+          reference: group.map(skill => skill.reference).join(',')
         };
-      });
-  }
-
-  static containWords(row: string[], words: string[]): boolean {
-    return words.every(word => row.some(cell => cell.indexOf(word) >= 0));
+      }
+    );
   }
 }

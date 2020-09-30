@@ -18,7 +18,8 @@ class SkillSheetMock implements SheetRepository {
       ['バサラ', '', '技能B1', 'ヨミb1', 'TNX2', 'cdefg'],
       ['タタラ', '', '技能T1', '', 'TNX3', 'efghi'],
       ['カブキ', '', '技能K2', '', 'TOS1', 'ghijk'],
-      ['バサラ', '元力', '技能B2', '', 'TNX4', 'ijklm']
+      ['バサラ', '元力', '技能B2', '', 'TNX4', 'ijklm'],
+      ['カブキ', '', '技能K2', '', 'CTL1', 'klmno']
     ];
     return { header, content };
   }
@@ -27,18 +28,6 @@ class SkillSheetMock implements SheetRepository {
 const skillSheetMock: SheetRepository = new SkillSheetMock();
 const skillSearchService = new SkillSearchService(skillSheetMock);
 describe('skill-search.service', () => {
-  describe('containWords()', () => {
-    it('contain', () => {
-      const row = ['foo', 'bar', 'baz'];
-      const words = ['fo', 'az'];
-      expect(SkillSearchService.containWords(row, words)).toBe(true);
-    });
-    it('not contain', () => {
-      const row = ['foo', 'bar', 'baz'];
-      const words = ['fo', 'qux'];
-      expect(SkillSearchService.containWords(row, words)).toBe(false);
-    });
-  });
   describe('search()', () => {
     it('simple search', () => {
       const expected: Skill[] = [
@@ -58,6 +47,13 @@ describe('skill-search.service', () => {
         { name: '技能B2', ruby: '', style: 'バサラ：元力', reference: 'TNX4' }
       ];
       const result = skillSearchService.search('元力');
+      expect(result).toEqual(expected);
+    });
+    it('same name skill', () => {
+      const expected: Skill[] = [
+        { name: '技能K2', ruby: '', style: 'カブキ', reference: 'TOS1,CTL1' }
+      ];
+      const result = skillSearchService.search('技能K2');
       expect(result).toEqual(expected);
     });
   });
