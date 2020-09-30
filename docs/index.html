@@ -1,40 +1,84 @@
 <!DOCTYPE html>
-<head>
-  <title>TNX Search Engine</title>
-  <script
-    src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
-    integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI="
-    crossorigin="anonymous"
-    defer
-  ></script>
-  <script src="./index.js" defer></script>
-</head>
-<body>
-  <h1>トーキョーN◎VA データ検索</h1>
-  <div id="app">
-    <input v-model="query" />
-    <button v-on:click="search">検索</button>
-    <div>{{error}}</div>
-    <table>
-      <tr>
-        <th>名称</th>
-        <th>スタイル</th>
-        <th>参照</th>
-      </tr>
-      <tr v-for="skill in skills">
-        <td v-if="skill.ruby === ''">{{skill.name}}</td>
-        <td v-if="skill.ruby !== ''">
-          <ruby
-            ><rb>{{skill.name}}</rb><rp>（</rp><rt>{{skill.ruby}}</rt
-            ><rp>）</rp></ruby
-          >
-        </td>
-        <td v-if="skill.category === ''">{{skill.style}}</td>
-        <td v-if="skill.category !== ''">
-          {{skill.style}}：{{skill.category}}
-        </td>
-        <td>{{skill.reference}}</td>
-      </tr>
-    </table>
-  </div>
-</body>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TNX Search Engine</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+      integrity="sha256-WLKGWSIJYerRN8tbNGtXWVYnUM5wMJTXD8eG4NtGcDM="
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
+      integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./index.js" defer></script>
+  </head>
+  <body>
+    <section class="hero is-dark">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">トーキョーN◎VA データ検索</h1>
+        </div>
+      </div>
+    </section>
+    <section class="section pt-5">
+      <div id="app" class="container">
+        <div class="columns">
+          <div class="field has-addons column is-two-fifths">
+            <div class="control is-expanded">
+              <input v-model="query" type="text" class="input" />
+            </div>
+            <div class="control">
+              <button
+                v-on:click="search"
+                type="button"
+                class="button is-primary"
+              >
+                検索
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>{{error}}</div>
+        <table class="table is-striped is-narrow">
+          <thead>
+            <tr>
+              <th class="has-text-centered">名称</th>
+              <th class="has-text-centered">スタイル</th>
+              <th class="has-text-centered">参照</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="skill in skills">
+              <td v-if="skill.ruby === ''">{{skill.name}}</td>
+              <td v-if="skill.ruby !== ''">
+                <ruby
+                  ><rb>{{skill.name}}</rb><rp>（</rp><rt>{{skill.ruby}}</rt
+                  ><rp>）</rp></ruby
+                >
+              </td>
+              <td v-if="skill.category === ''" class="has-text-centered">
+                {{skill.style}}
+              </td>
+              <td v-if="skill.category !== ''" class="has-text-centered">
+                {{skill.style}}：{{skill.category}}
+              </td>
+              <td class="has-text-centered">{{skill.reference}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        トーキョーN◎VA THE
+        AXLERATIONは有限会社ファーイースト・アミューズメント・リサーチの著作物です
+      </div>
+    </footer>
+  </body>
+</html>
