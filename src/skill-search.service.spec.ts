@@ -42,6 +42,11 @@ describe('skill-search.service', () => {
       const result = skillSearchService.search('カブキ hij');
       expect(result).toEqual(expected);
     });
+    it('not found', () => {
+      const expected: Skill[] = [];
+      const result = skillSearchService.search('あああ');
+      expect(result).toEqual(expected);
+    });
     it('exist category', () => {
       const expected: Skill[] = [
         { name: '技能B2', ruby: '', style: 'バサラ：元力', reference: 'TNX4' }
