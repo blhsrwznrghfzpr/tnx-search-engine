@@ -31,20 +31,28 @@
         <div class="columns">
           <div class="field has-addons column is-two-fifths">
             <div class="control is-expanded">
-              <input v-model="query" type="text" class="input" />
+              <input
+                v-model="query"
+                v-on:keydown.enter="search"
+                type="text"
+                class="input"
+              />
             </div>
             <div class="control">
               <button
                 v-on:click="search"
                 type="button"
                 class="button is-primary"
+                v-bind:class="{ 'is-loading': isLoading }"
               >
                 検索
               </button>
             </div>
           </div>
         </div>
-        <div>{{error}}</div>
+        <div class="columns">
+          <p class="has-text-danger column">{{error}}</p>
+        </div>
         <table class="table is-striped is-narrow">
           <thead>
             <tr>
