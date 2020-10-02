@@ -28,7 +28,8 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
 
   const query = param.query;
   const option: SkillOption = {
-    skillTypes: param.skillTypes ?? []
+    skillTypes: param.skillTypes ?? [],
+    books: param.books ?? []
   };
   const skills = skillSearchService.search(query, option);
 

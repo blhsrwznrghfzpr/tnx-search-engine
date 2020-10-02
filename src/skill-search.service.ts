@@ -12,6 +12,7 @@ export interface Skill {
 
 export type SkillOption = {
   skillTypes: string[];
+  books: string[];
 };
 
 export class SkillSearchService {
@@ -26,13 +27,15 @@ export class SkillSearchService {
       .filter(row => SkillSearchService.filter(row, words, header, option))
       .map(
         (row): Skill => {
+          const book = row[header['書籍']];
+          const page = row[header['頁']];
           return {
             id: parseInt(row[header['ID']]),
             name: row[header['名称']],
             ruby: row[header['別読み']],
             style: row[header['スタイル']],
             category: row[header['カテゴリ']],
-            reference: row[header['参照']]
+            reference: `${book}${page}`
           };
         }
       );
@@ -49,6 +52,10 @@ export class SkillSearchService {
   static filter(row: string[], words: string[], header: Header, option: SkillOption): boolean {
     const skillType = row[header['種別']];
     if (option.skillTypes.length > 0 && option.skillTypes.indexOf(skillType) < 0) {
+      return false;
+    }
+    const book = row[header['書籍']];
+    if (option.books.length > 0 && option.books.indexOf(book) < 0) {
       return false;
     }
     return containWords(row, words);

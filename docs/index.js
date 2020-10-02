@@ -9,6 +9,17 @@ const ready = loaded => {
   }
 };
 
+const books = [
+  { name: 'TNX', checked: false },
+  { name: 'TOS', checked: false },
+  { name: 'CTL', checked: false },
+  { name: 'CHM', checked: false },
+  { name: 'BTD', checked: false },
+  { name: 'HDB', checked: false },
+  { name: 'ATS', checked: false },
+  { name: 'SKD', checked: false }
+];
+
 const STYLES = [
   'カブキ',
   'バサラ',
@@ -53,7 +64,7 @@ ready(() => {
       event: 'change'
     },
     template: `
-      <label class="checkbox ml-1">
+      <label class="checkbox ml-2">
         <input
           type="checkbox"
           v-bind:checked="checked"
@@ -64,17 +75,60 @@ ready(() => {
     `
   });
 
+  Vue.component('checks-columns', {
+    props: ['label', 'option'],
+    template: `
+      <div class="columns">
+        <div class="field is-horizontal column is-three-fifths">
+          <div class="field-label">
+            <labeled-checkbox
+              v-bind:label="label"
+              class="label"
+              v-model="option.isAllChecked"
+              v-on:change="changeAll"
+            ></labeled-checkbox>
+          </div>
+          <div class="field-body">
+            <labeled-checkbox
+              v-for="item of option.items"
+              v-bind:key="item.name"
+              v-bind:label="item.name"
+              v-model="item.checked"
+              v-on:change="changeOne"
+            ></labeled-checkbox>
+          </div>
+        </div>
+      </div>
+    `,
+    methods: {
+      changeAll() {
+        this.option.items.forEach(item => {
+          item.checked = this.option.isAllChecked;
+        });
+      },
+      changeOne() {
+        this.option.isAllChecked = this.option.items.every(item => item.checked);
+      }
+    }
+  });
+
   const app = new Vue({
     el: '#app',
     data: {
       query: '',
       isLoading: false,
-      isSkillTypeAll: false,
-      skillTypes: [
-        { label: '特技', checked: false },
-        { label: '秘技', checked: false },
-        { label: '奥義', checked: false }
-      ],
+      skillTypeOption: {
+        isAllChecked: false,
+        items: [
+          { name: '特技', checked: false },
+          { name: '秘技', checked: false },
+          { name: '奥義', checked: false }
+        ]
+      },
+      bookOption: {
+        isAllChecked: false,
+        items: books
+      },
       error: '',
       skills: []
     },
@@ -91,11 +145,23 @@ ready(() => {
         );
         url.searchParams.append('type', 'skill');
         url.searchParams.append('query', this.query);
-        if (!this.isSkillTypeAll && this.skillTypes.some(skillType => skillType.checked)) {
-          this.skillTypes
+        if (
+          !this.skillTypeOption.isAllChecked &&
+          this.skillTypeOption.items.some(skillType => skillType.checked)
+        ) {
+          this.skillTypeOption.items
             .filter(skillType => skillType.checked)
-            .forEach(skillType => url.searchParams.append('skillTypes', skillType.label));
+            .forEach(skillType => url.searchParams.append('skillTypes', skillType.name));
         }
+        if (
+          !this.bookOption.isAllChecked &&
+          this.bookOption.items.some(skillType => skillType.checked)
+        ) {
+          this.bookOption.items
+            .filter(book => book.checked)
+            .forEach(book => url.searchParams.append('books', book.name));
+        }
+        console.log(url.search);
         fetch(url)
           .then(r => {
             if (!r.ok) {
@@ -124,14 +190,6 @@ ready(() => {
           .finally(() => {
             app.isLoading = false;
           });
-      },
-      changeSkillTypeAll() {
-        this.skillTypes.forEach(skillType => {
-          skillType.checked = this.isSkillTypeAll;
-        });
-      },
-      changeSkillType() {
-        this.isSkillTypeAll = this.skillTypes.every(skillType => skillType.checked);
       }
     }
   });
