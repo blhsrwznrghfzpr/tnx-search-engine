@@ -1,4 +1,4 @@
-type Header = {
+export type Header = {
   [title: string]: number;
 };
 

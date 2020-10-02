@@ -51,6 +51,27 @@
           </div>
         </div>
         <div class="columns">
+          <div class="field is-horizontal column is-half">
+            <div class="field-label"><label class="label">種別</label></div>
+            <div class="field-body">
+              <div class="control">
+                <labeled-checkbox
+                  label="全て"
+                  v-model="isSkillTypeAll"
+                  v-on:change="changeSkillTypeAll"
+                ></labeled-checkbox>
+                <labeled-checkbox
+                  v-for="skillType of skillTypes"
+                  v-bind:key="skillType.label"
+                  v-bind:label="skillType.label"
+                  v-model="skillType.checked"
+                  v-on:change="changeSkillType"
+                ></labeled-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="columns">
           <p class="has-text-danger column">{{error}}</p>
         </div>
         <table class="table is-striped is-narrow">

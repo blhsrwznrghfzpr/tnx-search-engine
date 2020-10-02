@@ -1,20 +1,24 @@
 import HttpRequestEvent = GoogleAppsScript.Events.AppsScriptHttpRequestEvent;
 import TextOutput = GoogleAppsScript.Content.TextOutput;
 import { SpreadsheetRepository } from './sheet-repository';
-import { SkillSearchService } from './skill-search.service';
+import { SkillOption, SkillSearchService } from './skill-search.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare let global: any;
 
-type Parameter = SkillParameter;
-
-interface SkillParameter {
+type Parameter = {
   type: 'skill';
   query: string;
-}
+};
+
+type Parameters = {
+  [K in keyof Parameter]: Array<Parameter[K]>;
+};
+
+type SkillParameter = Parameter & Partial<SkillOption>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isParam = (param: any): param is Parameter => param.query && param.type;
+const isParams = (param: any): param is Parameters => param.query && param.type;
 
 const isSkillParam = (param: Parameter): param is SkillParameter => param.type === 'skill';
 
@@ -23,7 +27,11 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
   const skillSearchService = new SkillSearchService(sheetRepository);
 
   const query = param.query;
-  const skills = skillSearchService.search(query);
+  const option: SkillOption = {
+    skillTypes: param.skillTypes ?? []
+  };
+  const skills = skillSearchService.search(query, option);
+
   const data = { ok: true, skills };
   const payload = JSON.stringify(data);
   return ContentService.createTextOutput(payload).setMimeType(ContentService.MimeType.JSON);
@@ -36,10 +44,15 @@ const errorOutput = (reason: string): TextOutput => {
 };
 
 global.doGet = (e: HttpRequestEvent): TextOutput => {
-  const param = e.parameter;
-  if (!isParam(param)) {
+  const params = e.parameters;
+  if (!isParams(params)) {
     return errorOutput('param is falty');
   }
+  const param: Parameter = {
+    ...params,
+    type: params.type[0],
+    query: params.query.join(' ')
+  };
   if (isSkillParam(param)) {
     return skillSearchOutput(param);
   }

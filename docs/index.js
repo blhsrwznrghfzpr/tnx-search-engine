@@ -46,16 +46,40 @@ const STYLES = [
 ];
 
 ready(() => {
+  Vue.component('labeled-checkbox', {
+    props: ['label', 'checked'],
+    model: {
+      prop: 'checked',
+      event: 'change'
+    },
+    template: `
+      <label class="checkbox ml-1">
+        <input
+          type="checkbox"
+          v-bind:checked="checked"
+          v-on:change="$emit('change', $event.target.checked)"
+        />
+        {{ label }}
+      </label>
+    `
+  });
+
   const app = new Vue({
     el: '#app',
     data: {
       query: '',
       isLoading: false,
+      isSkillTypeAll: false,
+      skillTypes: [
+        { label: '特技', checked: false },
+        { label: '秘技', checked: false },
+        { label: '奥義', checked: false }
+      ],
       error: '',
       skills: []
     },
     methods: {
-      search: function() {
+      search() {
         this.error = '';
         this.query = this.query.trim();
         if (!this.query || this.isLoading) {
@@ -67,6 +91,11 @@ ready(() => {
         );
         url.searchParams.append('type', 'skill');
         url.searchParams.append('query', this.query);
+        if (!this.isSkillTypeAll && this.skillTypes.some(skillType => skillType.checked)) {
+          this.skillTypes
+            .filter(skillType => skillType.checked)
+            .forEach(skillType => url.searchParams.append('skillTypes', skillType.label));
+        }
         fetch(url)
           .then(r => {
             if (!r.ok) {
@@ -95,6 +124,14 @@ ready(() => {
           .finally(() => {
             app.isLoading = false;
           });
+      },
+      changeSkillTypeAll() {
+        this.skillTypes.forEach(skillType => {
+          skillType.checked = this.isSkillTypeAll;
+        });
+      },
+      changeSkillType() {
+        this.isSkillTypeAll = this.skillTypes.every(skillType => skillType.checked);
       }
     }
   });
