@@ -52,7 +52,7 @@
           </div>
         </div>
         <div class="columns" v-if="error.length > 0">
-          <p class="has-text-danger column">{{error}}</p>
+          <p class="has-text-danger column">{{ error }}</p>
         </div>
         <div class="columns" v-if="styles.length > 0">
           <div class="column is-three-fifths">
@@ -60,13 +60,6 @@
               {{ style }}
               <button
                 v-on:click="deleteStyle(index)"
-                class="delete is-small"
-              ></button>
-            </span>
-            <span v-if="styles.length > 3" class="tag is-danger ml-2">
-              全て削除
-              <button
-                v-on:click="deleteStyleAll"
                 class="delete is-small"
               ></button>
             </span>
@@ -107,6 +100,13 @@
                   </div>
                 </div>
               </div>
+              <span v-if="styles.length > 3" class="tag is-danger ml-2">
+                全て削除
+                <button
+                  v-on:click="deleteStyleAll"
+                  class="delete is-small"
+                ></button>
+              </span>
             </div>
           </div>
         </div>
@@ -124,20 +124,20 @@
           </thead>
           <tbody>
             <tr v-for="skill in skills">
-              <td v-if="skill.ruby === ''">{{skill.name}}</td>
+              <td v-if="skill.ruby === ''">{{ skill.name }}</td>
               <td v-if="skill.ruby !== ''">
-                <ruby
-                  ><rb>{{skill.name}}</rb><rp>（</rp><rt>{{skill.ruby}}</rt
-                  ><rp>）</rp></ruby
-                >
+                <ruby>
+                  <rb>{{ skill.name }}</rb>
+                  <rp>（</rp><rt>{{ skill.ruby }}</rt><rp>）</rp>
+                </ruby>
               </td>
               <td v-if="skill.category === ''" class="has-text-centered">
-                {{skill.style}}
+                {{ skill.style }}
               </td>
               <td v-if="skill.category !== ''" class="has-text-centered">
-                {{skill.style}}：{{skill.category}}
+                {{ skill.style }}：{{ skill.category }}
               </td>
-              <td class="has-text-centered">{{skill.reference}}</td>
+              <td class="has-text-centered">{{ skill.reference }}</td>
             </tr>
           </tbody>
         </table>
