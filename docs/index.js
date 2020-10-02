@@ -9,16 +9,16 @@ const ready = loaded => {
   }
 };
 
-const books = [
-  { name: 'TNX', checked: false },
-  { name: 'TOS', checked: false },
-  { name: 'CTL', checked: false },
-  { name: 'CHM', checked: false },
-  { name: 'BTD', checked: false },
-  { name: 'HDB', checked: false },
-  { name: 'ATS', checked: false },
-  { name: 'SKD', checked: false }
-];
+/**
+ * ひらがなをカタカナに変換する
+ * @param {string} str
+ */
+const hiraToKata = str => {
+  return str.replace(/[\u3041-\u3096]/g, function(match) {
+    const chr = match.charCodeAt(0) + 0x60;
+    return String.fromCharCode(chr);
+  });
+};
 
 const STYLES = [
   'カブキ',
@@ -52,8 +52,18 @@ const STYLES = [
   'カゲムシャ',
   'アヤカシ',
   'エトランゼ',
-  'ワークス',
-  '' // 本来は不要だが、打ち込み途中のデータで発生しうる
+  'ワークス'
+];
+
+const books = [
+  { name: 'TNX', checked: false },
+  { name: 'TOS', checked: false },
+  { name: 'CTL', checked: false },
+  { name: 'CHM', checked: false },
+  { name: 'BTD', checked: false },
+  { name: 'HDB', checked: false },
+  { name: 'ATS', checked: false },
+  { name: 'SKD', checked: false }
 ];
 
 ready(() => {
@@ -117,6 +127,14 @@ ready(() => {
     data: {
       query: '',
       isLoading: false,
+      error: '',
+      skills: [],
+
+      styles: [],
+      styleQuery: '',
+      inEntryStyle: false,
+      searchingStyles: [],
+
       skillTypeOption: {
         isAllChecked: false,
         items: [
@@ -128,23 +146,24 @@ ready(() => {
       bookOption: {
         isAllChecked: false,
         items: books
-      },
-      error: '',
-      skills: []
+      }
     },
     methods: {
       search() {
-        this.error = '';
         this.query = this.query.trim();
         if (!this.query || this.isLoading) {
           return;
         }
+        this.error = '';
         this.isLoading = true;
         const url = new URL(
           'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
         );
         url.searchParams.append('type', 'skill');
         url.searchParams.append('query', this.query);
+        if (this.styles.length != STYLES.length) {
+          this.styles.forEach(style => url.searchParams.append('styles', style));
+        }
         if (
           !this.skillTypeOption.isAllChecked &&
           this.skillTypeOption.items.some(skillType => skillType.checked)
@@ -161,7 +180,6 @@ ready(() => {
             .filter(book => book.checked)
             .forEach(book => url.searchParams.append('books', book.name));
         }
-        console.log(url.search);
         fetch(url)
           .then(r => {
             if (!r.ok) {
@@ -190,6 +208,36 @@ ready(() => {
           .finally(() => {
             app.isLoading = false;
           });
+      },
+      focusStyleQuery() {
+        this.searchStyle();
+        this.inEntryStyle = true;
+      },
+      blurStyleQuery() {
+        setTimeout(() => {
+          app.inEntryStyle = false;
+        }, 200);
+      },
+      searchStyle() {
+        if (!this.styleQuery) {
+          this.searchingStyles = STYLES.filter(style => !this.styles.includes(style));
+          return;
+        }
+        const regex = new RegExp([...hiraToKata(this.styleQuery)].join('.*'), 'i');
+        this.searchingStyles = STYLES.filter(
+          style => regex.test(style) && !this.styles.includes(style)
+        );
+      },
+      appendStyle(style) {
+        this.styles.push(style);
+        this.styleQuery = '';
+        this.inEntryStyle = false;
+      },
+      deleteStyle(index) {
+        this.styles.splice(index, 1);
+      },
+      deleteStyleAll() {
+        this.styles.splice(0, this.styles.length);
       }
     }
   });

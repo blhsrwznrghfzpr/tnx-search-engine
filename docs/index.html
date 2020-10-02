@@ -50,13 +50,69 @@
             </div>
           </div>
         </div>
+        <div class="columns" v-if="error.length > 0">
+          <p class="has-text-danger column">{{error}}</p>
+        </div>
+        <div class="columns" v-if="styles.length > 0">
+          <div class="column is-three-fifths">
+            <span v-for="(style, index) of styles" class="tag is-info ml-2">
+              {{ style }}
+              <button
+                v-on:click="deleteStyle(index)"
+                class="delete is-small"
+              ></button>
+            </span>
+            <span v-if="styles.length > 3" class="tag is-danger ml-2">
+              全て削除
+              <button
+                v-on:click="deleteStyleAll"
+                class="delete is-small"
+              ></button>
+            </span>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="field is-horizontal column is-three-fifths">
+            <div class="field-label">
+              <div class="control">
+                <label class="label">スタイル</label>
+              </div>
+            </div>
+            <div class="field-body">
+              <div
+                class="dropdown"
+                v-bind:class="{ 'is-active': inEntryStyle }"
+              >
+                <div class="dropdown-trigger">
+                  <input
+                    v-model="styleQuery"
+                    v-on:focus="focusStyleQuery"
+                    v-on:blur="blurStyleQuery"
+                    v-on:input="searchStyle"
+                    class="button"
+                    aria-haspopup="true"
+                    aria-controls="dropdown-menu"
+                  />
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    <a
+                      v-for="style of searchingStyles"
+                      v-on:click="appendStyle(style)"
+                      class="dropdown-item"
+                    >
+                      {{ style }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <checks-columns label="種別" v-bind:option="skillTypeOption">
         </checks-columns>
         <checks-columns label="書籍" v-bind:option="bookOption">
         </checks-columns>
-        <div class="columns">
-          <p class="has-text-danger column">{{error}}</p>
-        </div>
         <table class="table is-striped is-narrow">
           <thead>
             <tr>

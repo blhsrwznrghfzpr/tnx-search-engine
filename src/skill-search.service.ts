@@ -11,6 +11,7 @@ export interface Skill {
 }
 
 export type SkillOption = {
+  styles: string[];
   skillTypes: string[];
   books: string[];
 };
@@ -49,7 +50,16 @@ export class SkillSearchService {
     );
   }
 
-  static filter(row: string[], words: string[], header: Header, option: SkillOption): boolean {
+  private static filter(
+    row: string[],
+    words: string[],
+    header: Header,
+    option: SkillOption
+  ): boolean {
+    const style = row[header['スタイル']];
+    if (option.styles.length > 0 && option.styles.indexOf(style) < 0) {
+      return false;
+    }
     const skillType = row[header['種別']];
     if (option.skillTypes.length > 0 && option.skillTypes.indexOf(skillType) < 0) {
       return false;

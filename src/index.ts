@@ -18,7 +18,11 @@ type Parameters = {
 type SkillParameter = Parameter & Partial<SkillOption>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isParams = (param: any): param is Parameters => param.query && param.type;
+const isParams = (param: any): param is Parameters =>
+  Array.isArray(param.query) &&
+  param.query.length > 0 &&
+  Array.isArray(param.type) &&
+  param.type.length > 0;
 
 const isSkillParam = (param: Parameter): param is SkillParameter => param.type === 'skill';
 
@@ -28,6 +32,7 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
 
   const query = param.query;
   const option: SkillOption = {
+    styles: param.styles ?? [],
     skillTypes: param.skillTypes ?? [],
     books: param.books ?? []
   };
@@ -47,13 +52,16 @@ const errorOutput = (reason: string): TextOutput => {
 global.doGet = (e: HttpRequestEvent): TextOutput => {
   const params = e.parameters;
   if (!isParams(params)) {
-    return errorOutput('param is falty');
+    return errorOutput('invalid params');
   }
   const param: Parameter = {
     ...params,
     type: params.type[0],
-    query: params.query.join(' ')
+    query: params.query.join(' ').trim()
   };
+  if (!param.query) {
+    return errorOutput('query is falsy');
+  }
   if (isSkillParam(param)) {
     return skillSearchOutput(param);
   }

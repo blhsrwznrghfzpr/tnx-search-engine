@@ -31,6 +31,7 @@ const skillSheetMock: SheetRepository = new SkillSheetMock();
 const skillSearchService = new SkillSearchService(skillSheetMock);
 
 const nullOption: SkillOption = {
+  styles: [],
   skillTypes: [],
   books: []
 };
@@ -69,6 +70,17 @@ describe('skill-search.service', () => {
         { id: 3, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'TOS1,CTL1' }
       ];
       const result = skillSearchService.search('技能K2', nullOption);
+      expect(result).toEqual(expected);
+    });
+    it('style option', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        styles: ['タタラ']
+      };
+      const expected: Skill[] = [
+        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' }
+      ];
+      const result = skillSearchService.search('efg', option);
       expect(result).toEqual(expected);
     });
     it('skillType option', () => {
