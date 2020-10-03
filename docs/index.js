@@ -191,10 +191,6 @@ ready(() => {
             if (!d.ok) {
               throw new Error(d.reason);
             }
-            if (d.skills.length < 1) {
-              app.error = '検索結果がありませんでした';
-              return;
-            }
             app.skills = d.skills.sort((a, b) => {
               const aStyleId = STYLES.indexOf(a.style);
               const bStyleId = STYLES.indexOf(b.style);
@@ -204,6 +200,9 @@ ready(() => {
               if (a.category > b.category) return 1;
               return a.id - b.id;
             });
+            if (d.skills.length < 1) {
+              app.error = '検索結果がありませんでした';
+            }
           })
           .catch(e => {
             console.error(e);
