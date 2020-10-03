@@ -34,7 +34,7 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
   const option: SkillOption = {
     styles: param.styles ?? [],
     skillTypes: param.skillTypes ?? [],
-    books: param.books ?? []
+    books: param.books ?? [],
   };
   const skills = skillSearchService.search(query, option);
 
@@ -57,7 +57,7 @@ global.doGet = (e: HttpRequestEvent): TextOutput => {
   const param: Parameter = {
     ...params,
     type: params.type[0],
-    query: params.query.join(' ').trim()
+    query: params.query.join(' ').trim(),
   };
   if (!param.query) {
     return errorOutput('query is falsy');

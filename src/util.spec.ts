@@ -21,19 +21,19 @@ describe('util', () => {
         { id: 2, name: 'bar' },
         { id: 3, name: 'baz' },
         { id: 2, name: 'qux' },
-        { id: 1, name: 'quux' }
+        { id: 1, name: 'quux' },
       ];
       const getKey = (val: { id: number; name: string }): number => val.id;
       const expected = [
         [
           { id: 1, name: 'foo' },
-          { id: 1, name: 'quux' }
+          { id: 1, name: 'quux' },
         ],
         [
           { id: 2, name: 'bar' },
-          { id: 2, name: 'qux' }
+          { id: 2, name: 'qux' },
         ],
-        [{ id: 3, name: 'baz' }]
+        [{ id: 3, name: 'baz' }],
       ];
       expect(groupBy(arr, getKey)).toStrictEqual(expected);
     });

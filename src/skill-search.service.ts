@@ -25,7 +25,7 @@ export class SkillSearchService {
 
     const words = query.split(/\s+/g);
     const result = sheetData.content
-      .filter(row => SkillSearchService.filter(row, words, header, option))
+      .filter((row) => SkillSearchService.filter(row, words, header, option))
       .map(
         (row): Skill => {
           const book = row[header['書籍']];
@@ -36,15 +36,15 @@ export class SkillSearchService {
             ruby: row[header['別読み']],
             style: row[header['スタイル']],
             category: row[header['カテゴリ']],
-            reference: `${book}${page}`
+            reference: `${book}${page}`,
           };
         }
       );
-    return groupBy(result, val => `${val.name}+${val.ruby}+${val.style}+${val.category}`).map(
+    return groupBy(result, (val) => `${val.name}+${val.ruby}+${val.style}+${val.category}`).map(
       (group): Skill => {
         return {
           ...group[0],
-          reference: group.map(skill => skill.reference).join(',')
+          reference: group.map((skill) => skill.reference).join(','),
         };
       }
     );

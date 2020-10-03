@@ -1,5 +1,5 @@
 export const containWords = (row: string[], words: string[]): boolean =>
-  words.every(word => row.some(cell => cell.indexOf(word) >= 0));
+  words.every((word) => row.some((cell) => cell.indexOf(word) >= 0));
 
 export const groupBy = <K extends PropertyKey, V>(
   array: readonly V[],
@@ -17,5 +17,5 @@ export const groupBy = <K extends PropertyKey, V>(
     },
     ([[], {}] as unknown) as [K[], Record<K, V[]>]
   );
-  return keys.map(key => obj[key]);
+  return keys.map((key) => obj[key]);
 };

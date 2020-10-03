@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-const ready = loaded => {
+const ready = (loaded) => {
   if (['interactive', 'complete'].includes(document.readyState)) {
     loaded();
   } else {
@@ -13,8 +13,8 @@ const ready = loaded => {
  * ひらがなをカタカナに変換する
  * @param {string} str
  */
-const hiraToKata = str => {
-  return str.replace(/[\u3041-\u3096]/g, function(match) {
+const hiraToKata = (str) => {
+  return str.replace(/[\u3041-\u3096]/g, function (match) {
     const chr = match.charCodeAt(0) + 0x60;
     return String.fromCharCode(chr);
   });
@@ -52,7 +52,7 @@ const STYLES = [
   'カゲムシャ',
   'アヤカシ',
   'エトランゼ',
-  'ワークス'
+  'ワークス',
 ];
 
 const books = [
@@ -63,7 +63,7 @@ const books = [
   { name: 'BTD', checked: false },
   { name: 'HDB', checked: false },
   { name: 'ATS', checked: false },
-  { name: 'SKD', checked: false }
+  { name: 'SKD', checked: false },
 ];
 
 ready(() => {
@@ -71,7 +71,7 @@ ready(() => {
     props: ['label', 'checked'],
     model: {
       prop: 'checked',
-      event: 'change'
+      event: 'change',
     },
     template: `
       <label class="checkbox ml-2">
@@ -82,7 +82,7 @@ ready(() => {
         />
         {{ label }}
       </label>
-    `
+    `,
   });
 
   Vue.component('checks-columns', {
@@ -112,14 +112,14 @@ ready(() => {
     `,
     methods: {
       changeAll() {
-        this.option.items.forEach(item => {
+        this.option.items.forEach((item) => {
           item.checked = this.option.isAllChecked;
         });
       },
       changeOne() {
-        this.option.isAllChecked = this.option.items.every(item => item.checked);
-      }
-    }
+        this.option.isAllChecked = this.option.items.every((item) => item.checked);
+      },
+    },
   });
 
   const app = new Vue({
@@ -140,13 +140,13 @@ ready(() => {
         items: [
           { name: '特技', checked: false },
           { name: '秘技', checked: false },
-          { name: '奥義', checked: false }
-        ]
+          { name: '奥義', checked: false },
+        ],
       },
       bookOption: {
         isAllChecked: false,
-        items: books
-      }
+        items: books,
+      },
     },
     methods: {
       search() {
@@ -162,32 +162,32 @@ ready(() => {
         url.searchParams.append('type', 'skill');
         url.searchParams.append('query', this.query);
         if (this.styles.length != STYLES.length) {
-          this.styles.forEach(style => url.searchParams.append('styles', style));
+          this.styles.forEach((style) => url.searchParams.append('styles', style));
         }
         if (
           !this.skillTypeOption.isAllChecked &&
-          this.skillTypeOption.items.some(skillType => skillType.checked)
+          this.skillTypeOption.items.some((skillType) => skillType.checked)
         ) {
           this.skillTypeOption.items
-            .filter(skillType => skillType.checked)
-            .forEach(skillType => url.searchParams.append('skillTypes', skillType.name));
+            .filter((skillType) => skillType.checked)
+            .forEach((skillType) => url.searchParams.append('skillTypes', skillType.name));
         }
         if (
           !this.bookOption.isAllChecked &&
-          this.bookOption.items.some(skillType => skillType.checked)
+          this.bookOption.items.some((skillType) => skillType.checked)
         ) {
           this.bookOption.items
-            .filter(book => book.checked)
-            .forEach(book => url.searchParams.append('books', book.name));
+            .filter((book) => book.checked)
+            .forEach((book) => url.searchParams.append('books', book.name));
         }
         fetch(url)
-          .then(r => {
+          .then((r) => {
             if (!r.ok) {
               throw new Error(`status code: ${r.status}`);
             }
             return r.json();
           })
-          .then(d => {
+          .then((d) => {
             if (!d.ok) {
               throw new Error(d.reason);
             }
@@ -204,7 +204,7 @@ ready(() => {
               app.error = '検索結果がありませんでした';
             }
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e);
             app.error = e.message;
           })
@@ -223,12 +223,12 @@ ready(() => {
       },
       searchStyle() {
         if (!this.styleQuery) {
-          this.searchingStyles = STYLES.filter(style => !this.styles.includes(style));
+          this.searchingStyles = STYLES.filter((style) => !this.styles.includes(style));
           return;
         }
         const regex = new RegExp([...hiraToKata(this.styleQuery)].join('.*'), 'i');
         this.searchingStyles = STYLES.filter(
-          style => regex.test(style) && !this.styles.includes(style)
+          (style) => regex.test(style) && !this.styles.includes(style)
         );
       },
       appendStyle(style) {
@@ -241,7 +241,7 @@ ready(() => {
       },
       deleteStyleAll() {
         this.styles.splice(0, this.styles.length);
-      }
-    }
+      },
+    },
   });
 });

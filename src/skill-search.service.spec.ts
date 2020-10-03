@@ -14,14 +14,14 @@ class SkillSheetMock implements SheetRepository {
       別読み: 5,
       書籍: 6,
       頁: 7,
-      dummy: 8
+      dummy: 8,
     };
     const content = [
       ['0', 'カブキ', '', '秘技', '技能K1', '', 'TNX', '0', 'abcde'],
       ['1', 'バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'TNX', '2', 'cdefg'],
       ['2', 'タタラ', '', '特技', '技能T1', '', 'TNX', '3', 'efghi'],
       ['3', 'カブキ', '', '特技', '技能K2', '', 'TOS', '1', 'ghijk'],
-      ['4', 'カブキ', '', '特技', '技能K2', '', 'CTL', '1', 'ijklm']
+      ['4', 'カブキ', '', '特技', '技能K2', '', 'CTL', '1', 'ijklm'],
     ];
     return { header, content };
   }
@@ -33,7 +33,7 @@ const skillSearchService = new SkillSearchService(skillSheetMock);
 const nullOption: SkillOption = {
   styles: [],
   skillTypes: [],
-  books: []
+  books: [],
 };
 
 describe('skill-search.service', () => {
@@ -46,16 +46,16 @@ describe('skill-search.service', () => {
           ruby: 'ヨミb1',
           style: 'バサラ',
           category: '元力',
-          reference: 'TNX2'
+          reference: 'TNX2',
         },
-        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' }
+        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' },
       ];
       const result = skillSearchService.search('efg', nullOption);
       expect(result).toEqual(expected);
     });
     it('multi query search', () => {
       const expected: Skill[] = [
-        { id: 3, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'TOS1' }
+        { id: 3, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'TOS1' },
       ];
       const result = skillSearchService.search('カブキ hij', nullOption);
       expect(result).toEqual(expected);
@@ -67,7 +67,7 @@ describe('skill-search.service', () => {
     });
     it('same name skill', () => {
       const expected: Skill[] = [
-        { id: 3, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'TOS1,CTL1' }
+        { id: 3, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'TOS1,CTL1' },
       ];
       const result = skillSearchService.search('技能K2', nullOption);
       expect(result).toEqual(expected);
@@ -75,10 +75,10 @@ describe('skill-search.service', () => {
     it('style option', () => {
       const option: SkillOption = {
         ...nullOption,
-        styles: ['タタラ']
+        styles: ['タタラ'],
       };
       const expected: Skill[] = [
-        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' }
+        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' },
       ];
       const result = skillSearchService.search('efg', option);
       expect(result).toEqual(expected);
@@ -86,10 +86,10 @@ describe('skill-search.service', () => {
     it('skillType option', () => {
       const option: SkillOption = {
         ...nullOption,
-        skillTypes: ['秘技']
+        skillTypes: ['秘技'],
       };
       const expected: Skill[] = [
-        { id: 0, name: '技能K1', ruby: '', style: 'カブキ', category: '', reference: 'TNX0' }
+        { id: 0, name: '技能K1', ruby: '', style: 'カブキ', category: '', reference: 'TNX0' },
       ];
       const result = skillSearchService.search('カブキ', option);
       expect(result).toEqual(expected);
@@ -97,10 +97,10 @@ describe('skill-search.service', () => {
     it('book option', () => {
       const option: SkillOption = {
         ...nullOption,
-        books: ['CTL']
+        books: ['CTL'],
       };
       const expected: Skill[] = [
-        { id: 4, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'CTL1' }
+        { id: 4, name: '技能K2', ruby: '', style: 'カブキ', category: '', reference: 'CTL1' },
       ];
       const result = skillSearchService.search('カブキ', option);
       expect(result).toEqual(expected);

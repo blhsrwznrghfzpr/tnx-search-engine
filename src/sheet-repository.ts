@@ -28,7 +28,7 @@ export class SpreadsheetRepository implements SheetRepository {
       const title = firstRow[i].toString();
       header[title] = i;
     }
-    const content = sheetData.slice(1).map(rows => rows.map(cell => cell.toString()));
+    const content = sheetData.slice(1).map((rows) => rows.map((cell) => cell.toString()));
     return { header, content };
   }
 }
