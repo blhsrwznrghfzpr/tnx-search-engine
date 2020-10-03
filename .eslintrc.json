@@ -1,20 +1,6 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
-  ],
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "env": { "node": true, "es6": true },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "sourceType": "module",
-    "project": "./tsconfig.json"
-  },
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "env": { "es6": true },
   "rules": {
     "prettier/prettier": [
       "error",
@@ -24,5 +10,33 @@
         "printWidth": 100
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.ts"],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier/@typescript-eslint"
+      ],
+      "env": { "node": true },
+      "plugins": ["@typescript-eslint"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+      }
+    },
+    {
+      "files": ["docs/**/*.js"],
+      "env": { "browser": true },
+      "globals": {
+        "Vue": "readonly"
+      },
+      "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+      }
+    }
+  ]
 }

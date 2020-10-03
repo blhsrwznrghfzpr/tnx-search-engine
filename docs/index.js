@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 const ready = (loaded) => {
   if (['interactive', 'complete'].includes(document.readyState)) {
     loaded();
