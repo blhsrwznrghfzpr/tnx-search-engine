@@ -1,6 +1,4 @@
-export type Header = {
-  [title: string]: number;
-};
+export type Header = Record<string, number>;
 
 export type SheetData = {
   header: Header;
@@ -22,13 +20,13 @@ export class SpreadsheetRepository implements SheetRepository {
       throw Error(`sheet is not found. sheetName=${sheetName}`);
     }
     const sheetData = sheet.getDataRange().getValues();
-    const firstRow = sheetData[0];
-    const header = {} as Header;
-    for (let i = 0; i < firstRow.length; i++) {
-      const title = firstRow[i].toString();
-      header[title] = i;
-    }
-    const content = sheetData.slice(1).map((rows) => rows.map((cell) => cell.toString()));
+    const header = sheetData[0]
+      .map((val) => val.toString() as string)
+      .reduce((obj, val, idx) => {
+        obj[val] = idx;
+        return obj;
+      }, {} as Header);
+    const content = sheetData.slice(1).map((row) => row.map((val) => val.toString() as string));
     return { header, content };
   }
 }

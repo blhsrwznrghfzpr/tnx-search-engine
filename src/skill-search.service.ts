@@ -1,14 +1,14 @@
 import { Header, SheetRepository } from './sheet-repository';
 import { containWords, groupBy } from './util';
 
-export interface Skill {
+export type Skill = {
   id: number;
   name: string;
   ruby: string;
   style: string;
   category: string;
   reference: string;
-}
+};
 
 export type SkillOption = {
   styles: string[];
