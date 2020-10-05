@@ -63,6 +63,29 @@ const books = [
   { name: 'SKD', checked: false },
 ];
 
+const sortByName = (isAsc) => (a, b) => {
+  const order = isAsc ? 1 : -1;
+  if (a.name < b.name) return -1 * order;
+  if (a.name > b.name) return order;
+  return 0;
+};
+
+const sortByStyle = (isAsc) => (a, b) => {
+  const order = isAsc ? 1 : -1;
+  const aStyleId = STYLES.indexOf(a.style);
+  const bStyleId = STYLES.indexOf(b.style);
+  if (aStyleId < bStyleId) return -1 * order;
+  if (aStyleId > bStyleId) return order;
+  if (a.category < b.category) return -1 * order;
+  if (a.category > b.category) return order;
+  return a.id - b.id;
+};
+
+const sortByReference = (isAsc) => (a, b) => {
+  const order = isAsc ? 1 : -1;
+  return (a.id - b.id) * order;
+};
+
 ready(() => {
   Vue.component('labeled-checkbox', {
     props: ['label', 'checked'],
@@ -125,7 +148,10 @@ ready(() => {
       query: '',
       isLoading: false,
       error: '',
+
       skills: [],
+      sortKey: '',
+      isAsc: true,
 
       styles: [],
       styleQuery: '',
@@ -192,15 +218,9 @@ ready(() => {
             if (!d.ok) {
               throw new Error(d.reason);
             }
-            app.skills = d.skills.sort((a, b) => {
-              const aStyleId = STYLES.indexOf(a.style);
-              const bStyleId = STYLES.indexOf(b.style);
-              if (aStyleId < bStyleId) return -1;
-              if (aStyleId > bStyleId) return 1;
-              if (a.category < b.category) return -1;
-              if (a.category > b.category) return 1;
-              return a.id - b.id;
-            });
+            app.sortKey = 'style';
+            app.isAsc = true;
+            app.skills = d.skills.sort(sortByStyle(app.isAsc));
             if (d.skills.length < 1) {
               app.error = '検索結果がありませんでした';
             }
@@ -244,6 +264,34 @@ ready(() => {
       deleteStyleAll() {
         this.styles.splice(0, this.styles.length);
         this.searchStyle();
+      },
+      sort(sortKey) {
+        if (sortKey === this.sortKey) {
+          this.isAsc = !this.isAsc;
+        } else {
+          this.isAsc = true;
+          this.sortKey = sortKey;
+        }
+        switch (sortKey) {
+          case 'name':
+            this.skills = this.skills.sort(sortByName(this.isAsc));
+            return;
+          case 'style':
+            this.skills = this.skills.sort(sortByStyle(this.isAsc));
+            return;
+          case 'reference':
+            this.skills = this.skills.sort(sortByReference(this.isAsc));
+            return;
+          default:
+            console.error(`unknown sortKey=${sortKey}`);
+            return;
+        }
+      },
+      sortClass(sortKey) {
+        return {
+          asc: sortKey === this.sortKey && this.isAsc,
+          desc: sortKey === this.sortKey && !this.isAsc,
+        };
       },
     },
   });

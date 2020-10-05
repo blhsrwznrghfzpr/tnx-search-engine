@@ -10,6 +10,14 @@
       integrity="sha256-WLKGWSIJYerRN8tbNGtXWVYnUM5wMJTXD8eG4NtGcDM="
       crossorigin="anonymous"
     />
+    <style>
+      .asc::after {
+        content: "▲";
+      }
+      .desc::after {
+        content: "▼";
+      }
+    </style>
     <script
       src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
       integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI="
@@ -117,9 +125,27 @@
         <table class="table is-striped is-narrow">
           <thead>
             <tr>
-              <th class="has-text-centered">名称</th>
-              <th class="has-text-centered">スタイル</th>
-              <th class="has-text-centered">参照</th>
+              <th
+                class="has-text-centered is-clickable"
+                v-on:click="sort('name')"
+                v-bind:class="sortClass('name')"
+              >
+                名称
+              </th>
+              <th
+                class="has-text-centered is-clickable"
+                v-on:click="sort('style')"
+                v-bind:class="sortClass('style')"
+              >
+                スタイル
+              </th>
+              <th
+                class="has-text-centered is-clickable"
+                v-on:click="sort('reference')"
+                v-bind:class="sortClass('reference')"
+              >
+                参照
+              </th>
             </tr>
           </thead>
           <tbody>
