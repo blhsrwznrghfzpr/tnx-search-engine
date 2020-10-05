@@ -130,7 +130,7 @@ ready(() => {
       styles: [],
       styleQuery: '',
       inEntryStyle: false,
-      searchingStyles: [],
+      searchingStyles: STYLES,
 
       skillTypeOption: {
         isAllChecked: false,
@@ -214,7 +214,6 @@ ready(() => {
           });
       },
       focusStyleQuery() {
-        this.searchStyle();
         this.inEntryStyle = true;
       },
       blurStyleQuery() {
@@ -236,12 +235,15 @@ ready(() => {
         this.styles.push(style);
         this.styleQuery = '';
         this.inEntryStyle = false;
+        this.searchStyle();
       },
       deleteStyle(index) {
         this.styles.splice(index, 1);
+        this.searchStyle();
       },
       deleteStyleAll() {
         this.styles.splice(0, this.styles.length);
+        this.searchStyle();
       },
     },
   });
