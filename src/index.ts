@@ -27,15 +27,18 @@ const isParams = (param: any): param is Parameters =>
 const isSkillParam = (param: Parameter): param is SkillParameter => param.type === 'skill';
 
 const skillSearchOutput = (param: SkillParameter): TextOutput => {
-  const sheetRepository = new SpreadsheetRepository();
-  const skillSearchService = new SkillSearchService(sheetRepository);
-
   const query = param.query;
   const option: SkillOption = {
     styles: param.styles ?? [],
     skillTypes: param.skillTypes ?? [],
     books: param.books ?? [],
   };
+  if (!param.query && option.styles.length < 1) {
+    return errorOutput('query is falsy');
+  }
+
+  const sheetRepository = new SpreadsheetRepository();
+  const skillSearchService = new SkillSearchService(sheetRepository);
   const skills = skillSearchService.search(query, option);
 
   const data = { ok: true, skills };
@@ -59,9 +62,6 @@ global.doGet = (e: HttpRequestEvent): TextOutput => {
     type: params.type[0],
     query: params.query.join(' ').trim(),
   };
-  if (!param.query) {
-    return errorOutput('query is falsy');
-  }
   if (isSkillParam(param)) {
     return skillSearchOutput(param);
   }

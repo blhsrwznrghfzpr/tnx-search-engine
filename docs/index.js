@@ -148,7 +148,11 @@ ready(() => {
     methods: {
       search() {
         this.query = this.query.trim();
-        if (!this.query || this.isLoading) {
+        if (this.isLoading) {
+          return;
+        }
+        if (!this.query && (this.styles.length < 1 || this.styles.length === STYLES.length)) {
+          this.error = '検索ワードを入力するか、スタイルを選択してください。';
           return;
         }
         this.error = '';

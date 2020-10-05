@@ -83,6 +83,25 @@ describe('skill-search.service', () => {
       const result = skillSearchService.search('efg', option);
       expect(result).toEqual(expected);
     });
+    it('style option and empty query', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        styles: ['バサラ', 'タタラ'],
+      };
+      const expected: Skill[] = [
+        {
+          id: 1,
+          name: '技能B1',
+          ruby: 'ヨミb1',
+          style: 'バサラ',
+          category: '元力',
+          reference: 'TNX2',
+        },
+        { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' },
+      ];
+      const result = skillSearchService.search('', option);
+      expect(result).toEqual(expected);
+    });
     it('skillType option', () => {
       const option: SkillOption = {
         ...nullOption,
