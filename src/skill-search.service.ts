@@ -17,30 +17,21 @@ export type SkillOption = {
 };
 
 export class SkillSearchService {
-  constructor(private sheetRepository: SheetRepository) {}
+  private readonly header: Header;
+  private readonly content: string[][];
+
+  constructor(private sheetRepository: SheetRepository) {
+    const sheetData = this.sheetRepository.getSheetData('技能');
+    this.header = sheetData.header;
+    this.content = sheetData.content;
+  }
 
   search(query: string, option: SkillOption): Skill[] {
-    const sheetData = this.sheetRepository.getSheetData('技能');
-    const header = sheetData.header;
-
     const words = query.split(/\s+/g);
-    const result = sheetData.content
-      .filter((row) => SkillSearchService.filter(row, words, header, option))
-      .map(
-        (row): Skill => {
-          const book = row[header['書籍']];
-          const page = row[header['頁']];
-          return {
-            id: parseInt(row[header['ID']]),
-            name: row[header['名称']],
-            ruby: row[header['別読み']],
-            style: row[header['スタイル']],
-            category: row[header['カテゴリ']],
-            reference: `${book}${page}`,
-          };
-        }
-      );
-    return groupBy(result, (val) => `${val.name}+${val.ruby}+${val.style}+${val.category}`).map(
+    const result = this.content
+      .filter((row) => this.filter(row, words, option))
+      .map(this.row2skill);
+    return groupBy(result, SkillSearchService.groupKey).map(
       (group): Skill => {
         return {
           ...group[0],
@@ -50,24 +41,35 @@ export class SkillSearchService {
     );
   }
 
-  private static filter(
-    row: string[],
-    words: string[],
-    header: Header,
-    option: SkillOption
-  ): boolean {
-    const style = row[header['スタイル']];
+  private filter(row: string[], words: string[], option: SkillOption): boolean {
+    const style = row[this.header['スタイル']];
     if (option.styles.length > 0 && option.styles.indexOf(style) < 0) {
       return false;
     }
-    const skillType = row[header['種別']];
+    const skillType = row[this.header['種別']];
     if (option.skillTypes.length > 0 && option.skillTypes.indexOf(skillType) < 0) {
       return false;
     }
-    const book = row[header['書籍']];
+    const book = row[this.header['書籍']];
     if (option.books.length > 0 && option.books.indexOf(book) < 0) {
       return false;
     }
     return containWords(row, words);
   }
+
+  private row2skill = (row: string[]) => {
+    const book = row[this.header['書籍']];
+    const page = row[this.header['頁']];
+    return {
+      id: parseInt(row[this.header['ID']]),
+      name: row[this.header['名称']],
+      ruby: row[this.header['別読み']],
+      style: row[this.header['スタイル']],
+      category: row[this.header['カテゴリ']],
+      reference: `${book}${page}`,
+    };
+  };
+
+  private static groupKey = (skill: Skill) =>
+    `${skill.name}+${skill.ruby}+${skill.style}+${skill.category}`;
 }
