@@ -37,7 +37,7 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
     return errorOutput('query is falsy');
   }
 
-  const sheetRepository = new SpreadsheetRepository('技能');
+  const sheetRepository = new SpreadsheetRepository();
   const skillSearchService = new SkillSearchService(sheetRepository);
   const skills = skillSearchService.search(query, option);
 

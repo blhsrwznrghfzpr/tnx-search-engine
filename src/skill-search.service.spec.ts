@@ -3,7 +3,8 @@ import { Skill, SkillOption, SkillSearchService } from './skill-search.service';
 jest.unmock('./skill-search.service');
 
 class SkillSheetMock implements SheetRepository {
-  getSheetData(): SheetData {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getSheetData(_sheetName: string): SheetData {
     const header: Header = {
       ID: 0,
       スタイル: 1,

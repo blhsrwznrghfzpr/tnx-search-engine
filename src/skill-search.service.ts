@@ -21,7 +21,7 @@ export class SkillSearchService {
   private readonly content: string[][];
 
   constructor(private sheetRepository: SheetRepository) {
-    const sheetData = this.sheetRepository.getSheetData();
+    const sheetData = this.sheetRepository.getSheetData('技能');
     this.header = sheetData.header;
     this.content = sheetData.content;
   }

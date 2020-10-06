@@ -6,21 +6,20 @@ export type SheetData = {
 };
 
 export interface SheetRepository {
-  getSheetData(): SheetData;
+  getSheetData(sheetName: string): SheetData;
 }
 
 export class SpreadsheetRepository implements SheetRepository {
-  private readonly sheet: GoogleAppsScript.Spreadsheet.Sheet;
+  getSheetData(sheetName: string): SheetData {
+    return SpreadsheetRepository._getSheetData(sheetName);
+  }
 
-  constructor(sheetName: string) {
+  private static _getSheetData(sheetName: string): SheetData {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
     if (!sheet) {
       throw Error(`sheet is not found. sheetName=${sheetName}`);
     }
-  }
-
-  getSheetData(): SheetData {
-    const sheetData = this.sheet.getDataRange().getValues();
+    const sheetData = sheet.getDataRange().getValues();
     const header = sheetData[0]
       .map((val) => val.toString() as string)
       .reduce((obj, val, idx) => {
