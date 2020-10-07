@@ -2,7 +2,12 @@ import { Header, SheetData, SheetRepository } from './sheet-repository';
 import { Skill, SkillOption, SkillSearchService } from './skill-search.service';
 jest.unmock('./skill-search.service');
 
+/** [row, column, val] */
+type UpdateParam = [number, number, string];
+
 class SkillSheetMock implements SheetRepository {
+  store: UpdateParam[] = [];
+
   getSheetData(): SheetData {
     const header: Header = {
       ID: 0,
@@ -14,6 +19,7 @@ class SkillSheetMock implements SheetRepository {
       書籍: 6,
       頁: 7,
       dummy: 8,
+      同名参照: 9,
     };
     const content = [
       ['0', 'カブキ', '', '秘技', '技能K1', '', 'TNX', '0', 'abcde'],
@@ -21,12 +27,17 @@ class SkillSheetMock implements SheetRepository {
       ['2', 'タタラ', '', '特技', '技能T1', '', 'TNX', '3', 'efghi'],
       ['3', 'カブキ', '', '特技', '技能K2', '', 'TOS', '1', 'ghijk'],
       ['4', 'カブキ', '', '特技', '技能K2', '', 'CTL', '1', 'ijklm'],
+      ['5', 'バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'CTL', '2', 'klmno'],
     ];
     return { header, content };
   }
+
+  updateCell(row: number, column: number, val: string): void {
+    this.store.push([row, column, val]);
+  }
 }
 
-const skillSheetMock: SheetRepository = new SkillSheetMock();
+const skillSheetMock = new SkillSheetMock();
 const skillSearchService = new SkillSearchService(skillSheetMock);
 
 const nullOption: SkillOption = {
@@ -94,7 +105,7 @@ describe('skill-search.service', () => {
           ruby: 'ヨミb1',
           style: 'バサラ',
           category: '元力',
-          reference: 'TNX2',
+          reference: 'TNX2,CTL2',
         },
         { id: 2, name: '技能T1', ruby: '', style: 'タタラ', category: '', reference: 'TNX3' },
       ];
@@ -122,6 +133,21 @@ describe('skill-search.service', () => {
       ];
       const result = skillSearchService.search('カブキ', option);
       expect(result).toEqual(expected);
+    });
+  });
+  describe('refGroupUpdate()', () => {
+    beforeEach(() => (skillSheetMock.store = []));
+    it('update', () => {
+      const expected: UpdateParam[] = [
+        [1, 10, 'TNX0'],
+        [2, 10, 'TNX2,CTL2'],
+        [6, 10, 'TNX2,CTL2'],
+        [3, 10, 'TNX3'],
+        [4, 10, 'TOS1,CTL1'],
+        [5, 10, 'TOS1,CTL1'],
+      ];
+      skillSearchService.refGroupUpdate();
+      expect(skillSheetMock.store).toEqual(expected);
     });
   });
 });

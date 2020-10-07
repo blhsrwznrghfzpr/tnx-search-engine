@@ -67,3 +67,9 @@ global.doGet = (e: HttpRequestEvent): TextOutput => {
   }
   return errorOutput('invalid type');
 };
+
+global.updateSkillRefs = (): void => {
+  const sheetRepository = new SpreadsheetRepository('技能');
+  const skillSearchService = new SkillSearchService(sheetRepository);
+  skillSearchService.refGroupUpdate();
+};

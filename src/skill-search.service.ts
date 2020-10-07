@@ -72,4 +72,13 @@ export class SkillSearchService {
 
   private static groupKey = (skill: Skill) =>
     `${skill.name}+${skill.ruby}+${skill.style}+${skill.category}`;
+
+  refGroupUpdate(): void {
+    const data = this.content.map(this.row2skill);
+    const column = 1 + this.header['同名参照'];
+    groupBy(data, SkillSearchService.groupKey).forEach((group) => {
+      const refs = group.map((skill) => skill.reference).join(',');
+      group.forEach((skill) => this.sheetRepository.updateCell(1 + skill.id, column, refs));
+    });
+  }
 }
