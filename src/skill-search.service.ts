@@ -8,6 +8,7 @@ export type Skill = {
   style: string;
   category: string;
   reference: string;
+  others: string;
 };
 
 export type SkillOption = {
@@ -67,6 +68,7 @@ export class SkillSearchService {
       style: row[this.header['スタイル']],
       category: row[this.header['カテゴリ']],
       reference: `${book}${page}`,
+      others: row[this.header['同名参照']],
     };
   };
 

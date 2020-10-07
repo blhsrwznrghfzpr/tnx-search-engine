@@ -220,7 +220,15 @@ ready(() => {
             }
             app.sortKey = 'style';
             app.isAsc = true;
-            app.skills = d.skills.sort(sortByStyle(app.isAsc));
+            app.skills = d.skills
+              .map((skill) => {
+                if (skill.reference === skill.others) return skill;
+                const refs = skill.reference.split(',');
+                const allRefs = skill.others.split(',');
+                const others = allRefs.filter((ref) => !refs.includes(ref));
+                return { ...skill, reference: `${skill.reference} (${others.join(',')})` };
+              })
+              .sort(sortByStyle(app.isAsc));
             if (d.skills.length < 1) {
               app.error = '検索結果がありませんでした';
             }
