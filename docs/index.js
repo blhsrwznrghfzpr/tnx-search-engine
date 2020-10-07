@@ -222,11 +222,11 @@ ready(() => {
             app.isAsc = true;
             app.skills = d.skills
               .map((skill) => {
-                if (skill.reference === skill.others) return skill;
-                const refs = skill.reference.split(',');
-                const allRefs = skill.others.split(',');
-                const others = allRefs.filter((ref) => !refs.includes(ref));
-                return { ...skill, reference: `${skill.reference} (${others.join(',')})` };
+                if (skill.searchRefs === skill.allRefs) return skill;
+                const searchRefs = skill.searchRefs.split(',');
+                const allRefs = skill.allRefs.split(',');
+                const others = allRefs.filter((ref) => !searchRefs.includes(ref)).join(',');
+                return { ...skill, searchRefs: `${skill.searchRefs} (${others})` };
               })
               .sort(sortByStyle(app.isAsc));
             if (d.skills.length < 1) {

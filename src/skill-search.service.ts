@@ -7,8 +7,8 @@ export type Skill = {
   ruby: string;
   style: string;
   category: string;
-  reference: string;
-  others: string;
+  searchRefs: string;
+  allRefs: string;
 };
 
 export type SkillOption = {
@@ -36,7 +36,7 @@ export class SkillSearchService {
       (group): Skill => {
         return {
           ...group[0],
-          reference: group.map((skill) => skill.reference).join(','),
+          searchRefs: group.map((skill) => skill.searchRefs).join(','),
         };
       }
     );
@@ -58,7 +58,7 @@ export class SkillSearchService {
     return containWords(row, words);
   }
 
-  private row2skill = (row: string[]) => {
+  private row2skill = (row: string[]): Skill => {
     const book = row[this.header['書籍']];
     const page = row[this.header['頁']];
     return {
@@ -67,8 +67,8 @@ export class SkillSearchService {
       ruby: row[this.header['別読み']],
       style: row[this.header['スタイル']],
       category: row[this.header['カテゴリ']],
-      reference: `${book}${page}`,
-      others: row[this.header['同名参照']],
+      searchRefs: `${book}${page}`,
+      allRefs: row[this.header['同名参照']],
     };
   };
 
@@ -79,8 +79,8 @@ export class SkillSearchService {
     const data = this.content.map(this.row2skill);
     const column = 1 + this.header['同名参照'];
     groupBy(data, SkillSearchService.groupKey).forEach((group) => {
-      const refs = group.map((skill) => skill.reference).join(',');
-      group.forEach((skill) => this.sheetRepository.updateCell(1 + skill.id, column, refs));
+      const allRefs = group.map((skill) => skill.searchRefs).join(',');
+      group.forEach((skill) => this.sheetRepository.updateCell(1 + skill.id, column, allRefs));
     });
   }
 }

@@ -56,8 +56,8 @@ describe('skill-search.service', () => {
           ruby: 'ヨミb1',
           style: 'バサラ',
           category: '元力',
-          reference: 'TNX2',
-          others: 'TNX2,CTL2',
+          searchRefs: 'TNX2',
+          allRefs: 'TNX2,CTL2',
         },
         {
           id: 2,
@@ -65,8 +65,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'タタラ',
           category: '',
-          reference: 'TNX3',
-          others: 'TNX3',
+          searchRefs: 'TNX3',
+          allRefs: 'TNX3',
         },
       ];
       const result = skillSearchService.search('efg', nullOption);
@@ -80,8 +80,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'カブキ',
           category: '',
-          reference: 'CTL1',
-          others: 'TOS1,CTL1',
+          searchRefs: 'CTL1',
+          allRefs: 'TOS1,CTL1',
         },
       ];
       const result = skillSearchService.search('カブキ klm', nullOption);
@@ -100,8 +100,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'カブキ',
           category: '',
-          reference: 'TOS1,CTL1',
-          others: 'TOS1,CTL1',
+          searchRefs: 'TOS1,CTL1',
+          allRefs: 'TOS1,CTL1',
         },
       ];
       const result = skillSearchService.search('技能K2', nullOption);
@@ -119,8 +119,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'タタラ',
           category: '',
-          reference: 'TNX3',
-          others: 'TNX3',
+          searchRefs: 'TNX3',
+          allRefs: 'TNX3',
         },
       ];
       const result = skillSearchService.search('efg', option);
@@ -138,8 +138,8 @@ describe('skill-search.service', () => {
           ruby: 'ヨミb1',
           style: 'バサラ',
           category: '元力',
-          reference: 'TNX2,CTL2',
-          others: 'TNX2,CTL2',
+          searchRefs: 'TNX2,CTL2',
+          allRefs: 'TNX2,CTL2',
         },
         {
           id: 2,
@@ -147,8 +147,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'タタラ',
           category: '',
-          reference: 'TNX3',
-          others: 'TNX3',
+          searchRefs: 'TNX3',
+          allRefs: 'TNX3',
         },
       ];
       const result = skillSearchService.search('', option);
@@ -166,8 +166,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'カブキ',
           category: '',
-          reference: 'TNX0',
-          others: 'TNX0',
+          searchRefs: 'TNX0',
+          allRefs: 'TNX0',
         },
       ];
       const result = skillSearchService.search('カブキ', option);
@@ -185,8 +185,8 @@ describe('skill-search.service', () => {
           ruby: '',
           style: 'カブキ',
           category: '',
-          reference: 'CTL1',
-          others: 'TOS1,CTL1',
+          searchRefs: 'CTL1',
+          allRefs: 'TOS1,CTL1',
         },
       ];
       const result = skillSearchService.search('カブキ', option);
