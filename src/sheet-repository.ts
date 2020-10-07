@@ -6,18 +6,20 @@ export type SheetData = {
 };
 
 export interface SheetRepository {
-  getSheetData(sheetName: string): SheetData;
+  getSheetData(): SheetData;
 }
 
 export class SpreadsheetRepository implements SheetRepository {
-  getSheetData(sheetName: string): SheetData {
-    return SpreadsheetRepository._getSheetData(sheetName);
+  private readonly sheetName: string;
+
+  constructor(sheetName: string) {
+    this.sheetName = sheetName;
   }
 
-  private static _getSheetData(sheetName: string): SheetData {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  getSheetData(): SheetData {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(this.sheetName);
     if (!sheet) {
-      throw Error(`sheet is not found. sheetName=${sheetName}`);
+      throw Error(`sheet is not found. sheetName=${this.sheetName}`);
     }
     const sheetData = sheet.getDataRange().getValues();
     const header = sheetData[0]
