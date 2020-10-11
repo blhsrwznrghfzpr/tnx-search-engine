@@ -63,14 +63,14 @@ const books = [
   { name: 'SKD', checked: false },
 ];
 
-const sortByName = (isAsc) => (a, b) => {
+const compare = (sortKey, isAsc) => (a, b) => {
   const order = isAsc ? 1 : -1;
-  if (a.name < b.name) return -1 * order;
-  if (a.name > b.name) return order;
+  if (a[sortKey] < b[sortKey]) return -1 * order;
+  if (a[sortKey] > b[sortKey]) return order;
   return 0;
 };
 
-const sortByStyle = (isAsc) => (a, b) => {
+const compareByStyle = (isAsc) => (a, b) => {
   const order = isAsc ? 1 : -1;
   const aStyleId = STYLES.indexOf(a.style);
   const bStyleId = STYLES.indexOf(b.style);
@@ -81,7 +81,16 @@ const sortByStyle = (isAsc) => (a, b) => {
   return a.id - b.id;
 };
 
-const sortByReference = (isAsc) => (a, b) => {
+const compareByCategory = (isAsc) => (a, b) => {
+  const order = isAsc ? 1 : -1;
+  if (a.majorCategory < b.majorCategory) return -1 * order;
+  if (a.majorCategory > b.majorCategory) return order;
+  if (a.minorCategory < b.minorCategory) return -1 * order;
+  if (a.minorCategory > b.minorCategory) return order;
+  return 0;
+};
+
+const compareByReference = (isAsc) => (a, b) => {
   const order = isAsc ? 1 : -1;
   return (a.id - b.id) * order;
 };
@@ -145,7 +154,11 @@ ready(() => {
   const app = new Vue({
     el: '#app',
     data: {
+      showMenu: false,
+      type: 'skill',
+
       query: '',
+      queryBk: '',
       isLoading: false,
       error: '',
 
@@ -170,9 +183,33 @@ ready(() => {
         isAllChecked: false,
         items: books,
       },
+
+      outfits: [],
+      outfitSortKey: '',
+      outfitAsc: true,
     },
     methods: {
+      isSkillSearch() {
+        return this.type === 'skill';
+      },
+      changeSkillSearch() {
+        this.type = 'skill';
+        this.error = '';
+        [this.query, this.queryBk] = [this.queryBk, this.query];
+      },
+      isOutfitSearch() {
+        return this.type === 'outfit';
+      },
+      changeOutfitSearch() {
+        this.type = 'outfit';
+        this.error = '';
+        [this.query, this.queryBk] = [this.queryBk, this.query];
+      },
       search() {
+        if (this.isSkillSearch()) return this.searchSkill();
+        if (this.isOutfitSearch()) return this.searchOutfit();
+      },
+      searchSkill() {
         this.query = this.query.trim();
         if (this.isLoading) {
           return;
@@ -186,7 +223,7 @@ ready(() => {
         const url = new URL(
           'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
         );
-        url.searchParams.append('type', 'skill');
+        url.searchParams.append('type', this.type);
         url.searchParams.append('query', this.query);
         if (this.styles.length != STYLES.length) {
           this.styles.forEach((style) => url.searchParams.append('styles', style));
@@ -228,7 +265,7 @@ ready(() => {
                 const others = allRefs.filter((ref) => !searchRefs.includes(ref)).join(',');
                 return { ...skill, searchRefs: `${skill.searchRefs} (${others})` };
               })
-              .sort(sortByStyle(app.isAsc));
+              .sort(compareByStyle(app.isAsc));
             if (d.skills.length < 1) {
               app.error = '検索結果がありませんでした';
             }
@@ -281,17 +318,14 @@ ready(() => {
           this.sortKey = sortKey;
         }
         switch (sortKey) {
-          case 'name':
-            this.skills = this.skills.sort(sortByName(this.isAsc));
-            return;
           case 'style':
-            this.skills = this.skills.sort(sortByStyle(this.isAsc));
+            this.skills = this.skills.sort(compareByStyle(this.isAsc));
             return;
           case 'reference':
-            this.skills = this.skills.sort(sortByReference(this.isAsc));
+            this.skills = this.skills.sort(compareByReference(this.isAsc));
             return;
           default:
-            console.error(`unknown sortKey=${sortKey}`);
+            this.skills = this.skills.sort(compare(sortKey, this.isAsc));
             return;
         }
       },
@@ -299,6 +333,89 @@ ready(() => {
         return {
           asc: sortKey === this.sortKey && this.isAsc,
           desc: sortKey === this.sortKey && !this.isAsc,
+        };
+      },
+      searchOutfit() {
+        this.query = this.query.trim();
+        if (this.isLoading) {
+          return;
+        }
+        if (!this.query) {
+          this.error = '検索ワードを入力してください。';
+          return;
+        }
+        this.error = '';
+        this.isLoading = true;
+        const url = new URL(
+          'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
+        );
+        url.searchParams.append('type', this.type);
+        url.searchParams.append('query', this.query);
+        if (
+          !this.bookOption.isAllChecked &&
+          this.bookOption.items.some((skillType) => skillType.checked)
+        ) {
+          this.bookOption.items
+            .filter((book) => book.checked)
+            .forEach((book) => url.searchParams.append('books', book.name));
+        }
+        fetch(url)
+          .then((r) => {
+            if (!r.ok) {
+              throw new Error(`status code: ${r.status}`);
+            }
+            return r.json();
+          })
+          .then((d) => {
+            if (!d.ok) {
+              throw new Error(d.reason);
+            }
+            app.outfitSortKey = 'category';
+            app.outfitAsc = true;
+            app.outfits = d.outfits
+              .map((outfit) => {
+                if (outfit.searchRefs === outfit.allRefs) return outfit;
+                const searchRefs = outfit.searchRefs.split(',');
+                const allRefs = outfit.allRefs.split(',');
+                const others = allRefs.filter((ref) => !searchRefs.includes(ref)).join(',');
+                return { ...outfit, searchRefs: `${outfit.searchRefs} (${others})` };
+              })
+              .sort(compareByCategory(app.outfitAsc));
+            if (d.outfits.length < 1) {
+              app.error = '検索結果がありませんでした';
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            app.error = e.message;
+          })
+          .finally(() => {
+            app.isLoading = false;
+          });
+      },
+      sortOutfit(sortKey) {
+        if (sortKey === this.outfitSortKey) {
+          this.outfitAsc = !this.outfitAsc;
+        } else {
+          this.outfitAsc = true;
+          this.outfitSortKey = sortKey;
+        }
+        switch (sortKey) {
+          case 'category':
+            this.outfits = this.outfits.sort(compareByCategory(this.outfitAsc));
+            return;
+          case 'reference':
+            this.outfits = this.outfits.sort(compareByReference(this.outfitAsc));
+            return;
+          default:
+            this.outfits = this.outfits.sort(compare(sortKey, this.outfitAsc));
+            return;
+        }
+      },
+      sortOutfitClass(sortKey) {
+        return {
+          asc: sortKey === this.outfitSortKey && this.outfitAsc,
+          desc: sortKey === this.outfitSortKey && !this.outfitAsc,
         };
       },
     },

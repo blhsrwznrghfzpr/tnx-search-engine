@@ -19,6 +19,12 @@
       }
     </style>
     <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.15.1/js/all.js"
+      integrity="sha384-9/D4ECZvKMVEJ9Bhr3ZnUAF+Ahlagp1cyPC7h5yDlZdXs4DQ/vRftzfd+2uFUuqS"
+      crossorigin="anonymous"
+    ></script>
+    <script
       src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
       integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI="
       crossorigin="anonymous"
@@ -27,153 +33,293 @@
     <script src="./index.js" defer></script>
   </head>
   <body>
-    <section class="hero is-dark">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">TNX Search Engine</h1>
-          <h2 class="subtitle">トーキョーN◎VA データ検索</h2>
-        </div>
-      </div>
-    </section>
-    <section class="section pt-5">
-      <div id="app" class="container">
-        <div class="columns">
-          <div class="field has-addons column is-two-fifths">
-            <div class="control is-expanded">
-              <input
-                v-model="query"
-                v-on:keydown.enter="search"
-                type="text"
-                class="input"
-              />
-            </div>
-            <div class="control">
-              <button
-                v-on:click="search"
-                type="button"
-                class="button is-primary"
-                v-bind:class="{ 'is-loading': isLoading }"
-              >
-                検索
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="columns" v-if="error.length > 0">
-          <p class="has-text-danger column">{{ error }}</p>
-        </div>
-        <div class="columns" v-if="styles.length > 0">
-          <div class="column is-three-fifths">
-            <span v-for="(style, index) of styles" class="tag is-info ml-2">
-              {{ style }}
-              <button
-                v-on:click="deleteStyle(index)"
-                class="delete is-small"
-              ></button>
-            </span>
-          </div>
-        </div>
-        <div class="columns">
-          <div class="field is-horizontal column is-three-fifths">
-            <div class="field-label">
-              <div class="control">
-                <label class="label">スタイル</label>
+    <div id="app">
+      <section class="hero is-dark is-bold">
+        <div class="hero-head">
+          <nav class="navbar">
+            <div class="container">
+              <div class="navbar-brand">
+                <span
+                  class="navbar-burger burger"
+                  v-bind:class="{ 'is-active': showMenu }"
+                  v-on:click="showMenu = !showMenu"
+                >
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
               </div>
-            </div>
-            <div class="field-body">
-              <div
-                class="dropdown is-hoverable"
-                v-bind:class="{ 'is-active': inEntryStyle }"
-              >
-                <div class="dropdown-trigger">
-                  <input
-                    v-model="styleQuery"
-                    v-on:focus="focusStyleQuery"
-                    v-on:blur="blurStyleQuery"
-                    v-on:input="searchStyle"
-                    class="button"
-                    aria-haspopup="true"
-                    aria-controls="dropdown-menu"
-                  />
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                  <div class="dropdown-content">
+
+              <div class="navbar-menu" v-bind:class="{ 'is-active': showMenu }">
+                <div class="navbar-end">
+                  <div class="navbar-item">
                     <a
-                      v-for="style of searchingStyles"
-                      v-on:click="appendStyle(style)"
-                      class="dropdown-item"
+                      class="button is-light is-link is-outlined is-inverted"
+                      href="https://twitter.com/trpg_yoshi"
                     >
-                      {{ style }}
+                      <span class="icon"><i class="fab fa-twitter"></i></span>
+                      <span>作った人</span>
+                    </a>
+                  </div>
+                  <div class="navbar-item">
+                    <a
+                      class="button is-light is-link is-outlined is-inverted"
+                      href="https://github.com/blhsrwznrghfzpr/tnx-search-engine"
+                    >
+                      <span class="icon"><i class="fab fa-github"></i></span>
+                      <span>GitHub</span>
                     </a>
                   </div>
                 </div>
               </div>
-              <span v-if="styles.length > 3" class="tag is-danger ml-2">
-                全て削除
+            </div>
+          </nav>
+        </div>
+
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">TNX Search Engine</h1>
+            <h2 class="subtitle">トーキョーN◎VA データ検索</h2>
+          </div>
+        </div>
+
+        <div class="hero-foot">
+          <nav class="tabs is-boxed">
+            <div class="container">
+              <ul>
+                <li v-bind:class="{ 'is-active': isSkillSearch() }">
+                  <a v-on:click="changeSkillSearch()">スタイル技能</a>
+                </li>
+                <li v-bind:class="{ 'is-active': isOutfitSearch() }">
+                  <a v-on:click="changeOutfitSearch()">アウトフィット</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </section>
+
+      <section class="section pt-5" v-if="isSkillSearch()">
+        <div class="container">
+          <div class="columns">
+            <div class="field has-addons column is-two-fifths">
+              <div class="control is-expanded">
+                <input
+                  v-model="query"
+                  v-on:keydown.enter="search"
+                  type="text"
+                  class="input"
+                />
+              </div>
+              <div class="control">
                 <button
-                  v-on:click="deleteStyleAll"
+                  v-on:click="search"
+                  type="button"
+                  class="button is-primary"
+                  v-bind:class="{ 'is-loading': isLoading }"
+                >
+                  検索
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="columns" v-if="error.length > 0">
+            <p class="has-text-danger column">{{ error }}</p>
+          </div>
+          <div class="columns" v-if="styles.length > 0">
+            <div class="column is-three-fifths">
+              <span v-for="(style, index) of styles" class="tag is-info ml-2">
+                {{ style }}
+                <button
+                  v-on:click="deleteStyle(index)"
                   class="delete is-small"
                 ></button>
               </span>
             </div>
           </div>
+          <div class="columns">
+            <div class="field is-horizontal column is-three-fifths">
+              <div class="field-label">
+                <div class="control">
+                  <label class="label">スタイル</label>
+                </div>
+              </div>
+              <div class="field-body">
+                <div
+                  class="dropdown is-hoverable"
+                  v-bind:class="{ 'is-active': inEntryStyle }"
+                >
+                  <div class="dropdown-trigger">
+                    <input
+                      v-model="styleQuery"
+                      v-on:focus="focusStyleQuery"
+                      v-on:blur="blurStyleQuery"
+                      v-on:input="searchStyle"
+                      class="button"
+                    />
+                  </div>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                      <a
+                        v-for="style of searchingStyles"
+                        v-on:click="appendStyle(style)"
+                        class="dropdown-item"
+                      >
+                        {{ style }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <span v-if="styles.length > 3" class="tag is-danger ml-2">
+                  全て削除
+                  <button
+                    v-on:click="deleteStyleAll"
+                    class="delete is-small"
+                  ></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <checks-columns label="種別" v-bind:option="skillTypeOption">
+          </checks-columns>
+          <checks-columns label="書籍" v-bind:option="bookOption">
+          </checks-columns>
+          <table class="table is-striped is-narrow">
+            <thead>
+              <tr>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sort('name')"
+                  v-bind:class="sortClass('name')"
+                >
+                  名称
+                </th>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sort('style')"
+                  v-bind:class="sortClass('style')"
+                >
+                  スタイル
+                </th>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sort('reference')"
+                  v-bind:class="sortClass('reference')"
+                >
+                  参照
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="skill in skills">
+                <td v-if="skill.ruby === ''">{{ skill.name }}</td>
+                <td v-if="skill.ruby !== ''">
+                  <ruby>
+                    <rb>{{ skill.name }}</rb>
+                    <rp>（</rp><rt>{{ skill.ruby }}</rt><rp>）</rp>
+                  </ruby>
+                </td>
+                <td v-if="skill.category === ''" class="has-text-centered">
+                  {{ skill.style }}
+                </td>
+                <td v-if="skill.category !== ''" class="has-text-centered">
+                  {{ skill.style }}：{{ skill.category }}
+                </td>
+                <td class="has-text-centered">{{ skill.searchRefs }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <checks-columns label="種別" v-bind:option="skillTypeOption">
-        </checks-columns>
-        <checks-columns label="書籍" v-bind:option="bookOption">
-        </checks-columns>
-        <table class="table is-striped is-narrow">
-          <thead>
-            <tr>
-              <th
-                class="has-text-centered is-clickable"
-                v-on:click="sort('name')"
-                v-bind:class="sortClass('name')"
-              >
-                名称
-              </th>
-              <th
-                class="has-text-centered is-clickable"
-                v-on:click="sort('style')"
-                v-bind:class="sortClass('style')"
-              >
-                スタイル
-              </th>
-              <th
-                class="has-text-centered is-clickable"
-                v-on:click="sort('reference')"
-                v-bind:class="sortClass('reference')"
-              >
-                参照
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="skill in skills">
-              <td v-if="skill.ruby === ''">{{ skill.name }}</td>
-              <td v-if="skill.ruby !== ''">
-                <ruby>
-                  <rb>{{ skill.name }}</rb>
-                  <rp>（</rp><rt>{{ skill.ruby }}</rt><rp>）</rp>
-                </ruby>
-              </td>
-              <td v-if="skill.category === ''" class="has-text-centered">
-                {{ skill.style }}
-              </td>
-              <td v-if="skill.category !== ''" class="has-text-centered">
-                {{ skill.style }}：{{ skill.category }}
-              </td>
-              <td class="has-text-centered">{{ skill.searchRefs }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        トーキョーN◎VA THE
-        AXLERATIONは有限会社ファーイースト・アミューズメント・リサーチの著作物です
-      </div>
-    </footer>
+      </section>
+
+      <section class="section pt-5" v-if="isOutfitSearch()">
+        <div class="container">
+          <div class="columns">
+            <div class="field has-addons column is-two-fifths">
+              <div class="control is-expanded">
+                <input
+                  v-model="query"
+                  v-on:keydown.enter="search"
+                  type="text"
+                  class="input"
+                />
+              </div>
+              <div class="control">
+                <button
+                  v-on:click="search"
+                  type="button"
+                  class="button is-primary"
+                  v-bind:class="{ 'is-loading': isLoading }"
+                >
+                  検索
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="columns" v-if="error.length > 0">
+            <p class="has-text-danger column">{{ error }}</p>
+          </div>
+          <checks-columns label="書籍" v-bind:option="bookOption">
+          </checks-columns>
+          <table class="table is-striped is-narrow">
+            <thead>
+              <tr>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sortOutfit('name')"
+                  v-bind:class="sortOutfitClass('name')"
+                >
+                  名称
+                </th>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sortOutfit('category')"
+                  v-bind:class="sortOutfitClass('category')"
+                  colspan="2"
+                >
+                  分類
+                </th>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sortOutfit('part')"
+                  v-bind:class="sortOutfitClass('part')"
+                >
+                  部位
+                </th>
+                <th
+                  class="has-text-centered is-clickable"
+                  v-on:click="sortOutfit('reference')"
+                  v-bind:class="sortOutfitClass('reference')"
+                >
+                  参照
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="outfit in outfits">
+                <td v-if="outfit.ruby === ''">{{ outfit.name }}</td>
+                <td v-if="outfit.ruby !== ''">
+                  <ruby>
+                    <rb>{{ outfit.name }}</rb>
+                    <rp>（</rp><rt>{{ outfit.ruby }}</rt><rp>）</rp>
+                  </ruby>
+                </td>
+                <td>{{ outfit.majorCategory }}</td>
+                <td>{{ outfit.minorCategory }}</td>
+                <td>{{ outfit.part }}</td>
+                <td class="has-text-centered">{{ outfit.searchRefs }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="content has-text-centered">
+          トーキョーN◎VA THE
+          AXLERATIONは有限会社ファーイースト・アミューズメント・リサーチの著作物です
+        </div>
+      </footer>
+    </div>
   </body>
 </html>
