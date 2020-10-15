@@ -37,7 +37,7 @@ export class OutfitSearchService {
     return groupBy(result, OutfitSearchService.groupKey).map(
       (group): Outfit => {
         return {
-          ...group[0],
+          ...group[group.length - 1],
           searchRefs: group.map((skill) => skill.searchRefs).join(','),
         };
       }

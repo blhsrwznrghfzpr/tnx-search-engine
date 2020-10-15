@@ -113,7 +113,7 @@ describe('outfit-search.service', () => {
     it('same name skill', () => {
       const expected: Outfit[] = [
         {
-          id: 0,
+          id: 2,
           majorCategory: '武器',
           minorCategory: '白兵武器',
           name: '生身',
