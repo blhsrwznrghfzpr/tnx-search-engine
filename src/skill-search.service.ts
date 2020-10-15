@@ -12,6 +12,7 @@ export type Skill = {
 };
 
 export type SkillOption = {
+  query: string[];
   styles: string[];
   skillTypes: string[];
   books: string[];
@@ -27,8 +28,8 @@ export class SkillSearchService {
     this.content = sheetData.content;
   }
 
-  search(query: string, option: SkillOption): Skill[] {
-    const words = query.split(/\s+/g);
+  search(option: SkillOption): Skill[] {
+    const words = option.query.join(' ').split(/\s+/g);
     const result = this.content
       .filter((row) => this.filter(row, words, option))
       .map(this.row2skill);

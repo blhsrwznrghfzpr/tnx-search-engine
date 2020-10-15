@@ -7,42 +7,36 @@ import { OutfitOption, OutfitSearchService } from './outfit-search.service';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare let global: any;
 
-type Parameter = {
-  type: 'skill' | 'outfit';
-  query: string;
+type Type<T extends string> = {
+  type: T;
 };
 
+type SkillParameter = Type<'skill'> & Partial<SkillOption>;
+type OutfitParameter = Type<'outfit'> & Partial<OutfitOption>;
+
+type Parameter = SkillParameter | OutfitParameter;
 type Parameters = {
-  [K in keyof Parameter]: Array<Parameter[K]>;
+  [K in keyof Pick<Parameter, 'type'>]: Array<Parameter[K]>;
 };
-
-type SkillParameter = Parameter & Partial<SkillOption>;
-type OutfitParameter = Parameter & Partial<OutfitOption>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isParams = (param: any): param is Parameters =>
-  Array.isArray(param.query) &&
-  param.query.length > 0 &&
-  Array.isArray(param.type) &&
-  param.type.length > 0;
-
-const isSkillParam = (param: Parameter): param is SkillParameter => param.type === 'skill';
-const isOutfitParam = (param: Parameter): param is OutfitParameter => param.type === 'outfit';
+  Array.isArray(param.type) && param.type.length > 0;
 
 const skillSearchOutput = (param: SkillParameter): TextOutput => {
-  const query = param.query;
   const option: SkillOption = {
+    query: param.query?.filter((q) => q) ?? [],
     styles: param.styles ?? [],
     skillTypes: param.skillTypes ?? [],
     books: param.books ?? [],
   };
-  if (!param.query && option.styles.length < 1) {
-    return errorOutput('query is falsy');
+  if (option.query.length < 1 && option.styles.length < 1) {
+    return errorOutput('query is empty');
   }
 
   const sheetRepository = new SpreadsheetRepository('技能');
   const skillSearchService = new SkillSearchService(sheetRepository);
-  const skills = skillSearchService.search(query, option);
+  const skills = skillSearchService.search(option);
 
   const data = { ok: true, skills };
   const payload = JSON.stringify(data);
@@ -50,20 +44,20 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
 };
 
 const outfitSearchOutput = (param: OutfitParameter): TextOutput => {
-  const query = param.query;
   const option: OutfitOption = {
+    query: param.query?.filter((q) => q) ?? [],
     styles: param.styles ?? [],
     majorCategories: param.majorCategories ?? [],
     companies: param.companies ?? [],
     books: param.books ?? [],
   };
-  if (!param.query) {
-    return errorOutput('query is falsy');
+  if (option.query.length < 1) {
+    return errorOutput('query is empty');
   }
 
   const sheetRepository = new SpreadsheetRepository('アウトフィット');
   const outfitSearchService = new OutfitSearchService(sheetRepository);
-  const outfits = outfitSearchService.search(query, option);
+  const outfits = outfitSearchService.search(option);
 
   const data = { ok: true, outfits };
   const payload = JSON.stringify(data);
@@ -84,12 +78,11 @@ global.doGet = (e: HttpRequestEvent): TextOutput => {
   const param: Parameter = {
     ...params,
     type: params.type[0],
-    query: params.query.join(' ').trim(),
   };
-  if (isSkillParam(param)) {
+  if (param.type === 'skill') {
     return skillSearchOutput(param);
   }
-  if (isOutfitParam(param)) {
+  if (param.type === 'outfit') {
     return outfitSearchOutput(param);
   }
   return errorOutput('invalid type');

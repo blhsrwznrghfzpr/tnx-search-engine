@@ -55,6 +55,7 @@ const outfitSheetMock = new OutfitSheetMock();
 const outfitSearchService = new OutfitSearchService(outfitSheetMock);
 
 const nullOption: OutfitOption = {
+  query: [],
   styles: [],
   majorCategories: [],
   companies: [],
@@ -64,6 +65,10 @@ const nullOption: OutfitOption = {
 describe('outfit-search.service', () => {
   describe('search()', () => {
     it('simple search', () => {
+      const option: OutfitOption = {
+        ...nullOption,
+        query: ['cde'],
+      };
       const expected: Outfit[] = [
         {
           id: 0,
@@ -86,10 +91,14 @@ describe('outfit-search.service', () => {
           allRefs: 'TNX1',
         },
       ];
-      const result = outfitSearchService.search('cde', nullOption);
+      const result = outfitSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('multi query search', () => {
+      const option: OutfitOption = {
+        ...nullOption,
+        query: ['射撃 cde'],
+      };
       const expected: Outfit[] = [
         {
           id: 1,
@@ -102,15 +111,23 @@ describe('outfit-search.service', () => {
           allRefs: 'TNX1',
         },
       ];
-      const result = outfitSearchService.search('射撃 cde', nullOption);
+      const result = outfitSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('not found', () => {
+      const option: OutfitOption = {
+        ...nullOption,
+        query: ['あああ'],
+      };
       const expected: Outfit[] = [];
-      const result = outfitSearchService.search('あああ', nullOption);
+      const result = outfitSearchService.search(option);
       expect(result).toEqual(expected);
     });
-    it('same name skill', () => {
+    it('same name outfit', () => {
+      const option: OutfitOption = {
+        ...nullOption,
+        query: ['生身'],
+      };
       const expected: Outfit[] = [
         {
           id: 2,
@@ -123,12 +140,13 @@ describe('outfit-search.service', () => {
           allRefs: 'TNX0,SKD0',
         },
       ];
-      const result = outfitSearchService.search('生身', nullOption);
+      const result = outfitSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('book option', () => {
       const option: OutfitOption = {
         ...nullOption,
+        query: ['生身'],
         books: ['TNX'],
       };
       const expected: Outfit[] = [
@@ -143,7 +161,7 @@ describe('outfit-search.service', () => {
           allRefs: 'TNX0,SKD0',
         },
       ];
-      const result = outfitSearchService.search('生身', option);
+      const result = outfitSearchService.search(option);
       expect(result).toEqual(expected);
     });
   });

@@ -13,6 +13,7 @@ export type Outfit = {
 };
 
 export type OutfitOption = {
+  query: string[];
   styles: string[];
   majorCategories: string[];
   companies: string[];
@@ -29,8 +30,8 @@ export class OutfitSearchService {
     this.content = sheetData.content;
   }
 
-  search(query: string, option: OutfitOption): Outfit[] {
-    const words = query.split(/\s+/g);
+  search(option: OutfitOption): Outfit[] {
+    const words = option.query.join(' ').split(/\s+/g);
     const result = this.content
       .filter((row) => this.filter(row, words, option))
       .map(this.row2skill);

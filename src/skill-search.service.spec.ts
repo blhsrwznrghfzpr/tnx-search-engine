@@ -41,6 +41,7 @@ const skillSheetMock = new SkillSheetMock();
 const skillSearchService = new SkillSearchService(skillSheetMock);
 
 const nullOption: SkillOption = {
+  query: [],
   styles: [],
   skillTypes: [],
   books: [],
@@ -49,6 +50,10 @@ const nullOption: SkillOption = {
 describe('skill-search.service', () => {
   describe('search()', () => {
     it('simple search', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        query: ['efg'],
+      };
       const expected: Skill[] = [
         {
           id: 1,
@@ -69,10 +74,14 @@ describe('skill-search.service', () => {
           allRefs: 'TNX3',
         },
       ];
-      const result = skillSearchService.search('efg', nullOption);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('multi query search', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        query: ['カブキ klm'],
+      };
       const expected: Skill[] = [
         {
           id: 4,
@@ -84,15 +93,23 @@ describe('skill-search.service', () => {
           allRefs: 'TOS1,CTL1',
         },
       ];
-      const result = skillSearchService.search('カブキ klm', nullOption);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('not found', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        query: ['あああ'],
+      };
       const expected: Skill[] = [];
-      const result = skillSearchService.search('あああ', nullOption);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('same name skill', () => {
+      const option: SkillOption = {
+        ...nullOption,
+        query: ['技能K2'],
+      };
       const expected: Skill[] = [
         {
           id: 3,
@@ -104,12 +121,13 @@ describe('skill-search.service', () => {
           allRefs: 'TOS1,CTL1',
         },
       ];
-      const result = skillSearchService.search('技能K2', nullOption);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('style option', () => {
       const option: SkillOption = {
         ...nullOption,
+        query: ['efg'],
         styles: ['タタラ'],
       };
       const expected: Skill[] = [
@@ -123,7 +141,7 @@ describe('skill-search.service', () => {
           allRefs: 'TNX3',
         },
       ];
-      const result = skillSearchService.search('efg', option);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('style option and empty query', () => {
@@ -151,12 +169,13 @@ describe('skill-search.service', () => {
           allRefs: 'TNX3',
         },
       ];
-      const result = skillSearchService.search('', option);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('skillType option', () => {
       const option: SkillOption = {
         ...nullOption,
+        query: ['カブキ'],
         skillTypes: ['秘技'],
       };
       const expected: Skill[] = [
@@ -170,12 +189,13 @@ describe('skill-search.service', () => {
           allRefs: 'TNX0',
         },
       ];
-      const result = skillSearchService.search('カブキ', option);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
     it('book option', () => {
       const option: SkillOption = {
         ...nullOption,
+        query: ['カブキ'],
         books: ['CTL'],
       };
       const expected: Skill[] = [
@@ -189,7 +209,7 @@ describe('skill-search.service', () => {
           allRefs: 'TOS1,CTL1',
         },
       ];
-      const result = skillSearchService.search('カブキ', option);
+      const result = skillSearchService.search(option);
       expect(result).toEqual(expected);
     });
   });

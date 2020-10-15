@@ -224,7 +224,9 @@ ready(() => {
           'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
         );
         url.searchParams.append('type', this.type);
-        url.searchParams.append('query', this.query);
+        if (this.query) {
+          url.searchParams.append('query', this.query);
+        }
         if (this.styles.length != STYLES.length) {
           this.styles.forEach((style) => url.searchParams.append('styles', style));
         }
