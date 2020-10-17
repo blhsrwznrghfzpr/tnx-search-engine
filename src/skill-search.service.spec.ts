@@ -10,25 +10,27 @@ class SkillSheetMock implements SheetRepository {
 
   getSheetData(): SheetData {
     const header: Header = {
-      ID: 0,
-      スタイル: 1,
-      カテゴリ: 2,
-      種別: 3,
-      名称: 4,
-      別読み: 5,
-      書籍: 6,
-      頁: 7,
-      dummy: 8,
-      同名参照: 9,
+      スタイル: 0,
+      カテゴリ: 1,
+      種別: 2,
+      名称: 3,
+      別読み: 4,
+      書籍: 5,
+      頁: 6,
+      dummy: 7,
+      同名参照: 8,
     };
-    const content = [
-      ['0', 'カブキ', '', '秘技', '技能K1', '', 'TNX', '0', 'abcde', 'TNX0'],
-      ['1', 'バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'TNX', '2', 'cdefg', 'TNX2,CTL2'],
-      ['2', 'タタラ', '', '特技', '技能T1', '', 'TNX', '3', 'efghi', 'TNX3'],
-      ['3', 'カブキ', '', '特技', '技能K2', '', 'TOS', '1', 'ghijk', 'TOS1,CTL1'],
-      ['4', 'カブキ', '', '特技', '技能K2', '', 'CTL', '1', 'ijklm', 'TOS1,CTL1'],
-      ['5', 'バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'CTL', '2', 'klmno', 'TNX2,CTL2'],
+    const data = [
+      ['カブキ', '', '秘技', '技能K1', '', 'TNX', '0', 'abcde', 'TNX0'],
+      ['バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'TNX', '2', 'cdefg', 'TNX2,CTL2'],
+      ['タタラ', '', '特技', '技能T1', '', 'TNX', '3', 'efghi', 'TNX3'],
+      ['カブキ', '', '特技', '技能K2', '', 'TOS', '1', 'ghijk', 'TOS1,CTL1'],
+      ['カブキ', '', '特技', '技能K2', '', 'CTL', '1', 'ijklm', 'TOS1,CTL1'],
+      ['バサラ', '元力', '特技', '技能B1', 'ヨミb1', 'CTL', '2', 'klmno', 'TNX2,CTL2'],
     ];
+    const content = data.map((data, id) => {
+      return { id, data };
+    });
     return { header, content };
   }
 
@@ -217,12 +219,12 @@ describe('skill-search.service', () => {
     beforeEach(() => (skillSheetMock.store = []));
     it('update', () => {
       const expected: UpdateParam[] = [
-        [1, 10, 'TNX0'],
-        [2, 10, 'TNX2,CTL2'],
-        [6, 10, 'TNX2,CTL2'],
-        [3, 10, 'TNX3'],
-        [4, 10, 'TOS1,CTL1'],
-        [5, 10, 'TOS1,CTL1'],
+        [0, 8, 'TNX0'],
+        [1, 8, 'TNX2,CTL2'],
+        [5, 8, 'TNX2,CTL2'],
+        [2, 8, 'TNX3'],
+        [3, 8, 'TOS1,CTL1'],
+        [4, 8, 'TOS1,CTL1'],
       ];
       skillSearchService.refGroupUpdate();
       expect(skillSheetMock.store).toEqual(expected);

@@ -10,39 +10,27 @@ class OutfitSheetMock implements SheetRepository {
 
   getSheetData(): SheetData {
     const header: Header = {
-      ID: 0,
-      大分類: 1,
-      小分類: 2,
-      名称: 3,
-      別読み: 4,
-      企業: 5,
-      部位: 6,
-      購入レート: 7,
-      常備化レート: 8,
-      書籍: 9,
-      頁: 10,
-      dummy: 11,
-      同名参照: 12,
+      大分類: 0,
+      小分類: 1,
+      名称: 2,
+      別読み: 3,
+      企業: 4,
+      部位: 5,
+      購入目標値: 6,
+      常備化経験点: 7,
+      書籍: 8,
+      頁: 9,
+      dummy: 10,
+      同名参照: 11,
     };
-    const content = [
-      ['0', '武器', '白兵武器', '生身', '', '-', '-', '-', '0', 'TNX', '0', 'abcde', 'TNX0,SKD0'],
-      [
-        '1',
-        '武器',
-        '射撃武器',
-        '銃',
-        'ガン',
-        '各社',
-        '片手持ち',
-        '3',
-        '1',
-        'TNX',
-        '1',
-        'cdefg',
-        'TNX1',
-      ],
-      ['2', '武器', '白兵武器', '生身', '', '-', '-', '-', '0', 'SKD', '0', 'efghi', 'TNX0,SKD0'],
+    const data = [
+      ['武器', '白兵武器', '生身', '', '-', '-', '-', '0', 'TNX', '0', 'abcde', 'TNX0,SKD0'],
+      ['武器', '射撃武器', '銃', 'ガン', '各社', '片手持ち', '3', '1', 'TNX', '1', 'cdefg', 'TNX1'],
+      ['武器', '白兵武器', '生身', '', '-', '-', '-', '0', 'SKD', '0', 'efghi', 'TNX0,SKD0'],
     ];
+    const content = data.map((data, id) => {
+      return { id, data };
+    });
     return { header, content };
   }
 
@@ -169,9 +157,9 @@ describe('outfit-search.service', () => {
     beforeEach(() => (outfitSheetMock.store = []));
     it('update', () => {
       const expected: UpdateParam[] = [
-        [1, 13, 'TNX0,SKD0'],
-        [3, 13, 'TNX0,SKD0'],
-        [2, 13, 'TNX1'],
+        [0, 11, 'TNX0,SKD0'],
+        [2, 11, 'TNX0,SKD0'],
+        [1, 11, 'TNX1'],
       ];
       outfitSearchService.refGroupUpdate();
       expect(outfitSheetMock.store).toEqual(expected);
