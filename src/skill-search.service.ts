@@ -73,8 +73,7 @@ export class SkillSearchService {
     };
   };
 
-  private static groupKey = (skill: Skill) =>
-    `${skill.name}+${skill.ruby}+${skill.style}+${skill.category}`;
+  private static groupKey = (skill: Skill) => `${skill.name}+${skill.style}`;
 
   refGroupUpdate(): void {
     const data = this.content.map(this.row2skill);
