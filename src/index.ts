@@ -25,7 +25,7 @@ const isParams = (param: any): param is Parameters =>
 
 const skillSearchOutput = (param: SkillParameter): TextOutput => {
   const option: SkillOption = {
-    query: param.query?.filter((q) => q) ?? [],
+    query: param.query?.filter((q) => q.trim()) ?? [],
     styles: param.styles ?? [],
     skillTypes: param.skillTypes ?? [],
     books: param.books ?? [],
@@ -45,7 +45,7 @@ const skillSearchOutput = (param: SkillParameter): TextOutput => {
 
 const outfitSearchOutput = (param: OutfitParameter): TextOutput => {
   const option: OutfitOption = {
-    query: param.query?.filter((q) => q) ?? [],
+    query: param.query?.filter((q) => q.trim()) ?? [],
     styles: param.styles ?? [],
     majorCategories: param.majorCategories ?? [],
     companies: param.companies ?? [],
