@@ -105,15 +105,15 @@
             <div class="field has-addons column is-two-fifths">
               <div class="control is-expanded">
                 <input
-                  v-model="query"
-                  v-on:keydown.enter="search"
+                  v-model="skillQuery"
+                  v-on:keydown.enter="searchSkill"
                   type="text"
                   class="input"
                 />
               </div>
               <div class="control">
                 <button
-                  v-on:click="search"
+                  v-on:click="searchSkill"
                   type="button"
                   class="button is-primary"
                   v-bind:class="{ 'is-loading': isLoading }"
@@ -238,15 +238,15 @@
             <div class="field has-addons column is-two-fifths">
               <div class="control is-expanded">
                 <input
-                  v-model="query"
-                  v-on:keydown.enter="search"
+                  v-model="outfitQuery"
+                  v-on:keydown.enter="searchOutfit"
                   type="text"
                   class="input"
                 />
               </div>
               <div class="control">
                 <button
-                  v-on:click="search"
+                  v-on:click="searchOutfit"
                   type="button"
                   class="button is-primary"
                   v-bind:class="{ 'is-loading': isLoading }"

@@ -157,11 +157,10 @@ ready(() => {
       showMenu: false,
       type: 'skill',
 
-      query: '',
-      queryBk: '',
       isLoading: false,
       error: '',
 
+      skillQuery: '',
       skills: [],
       sortKey: '',
       isAsc: true,
@@ -184,6 +183,7 @@ ready(() => {
         items: books,
       },
 
+      outfitQuery: '',
       outfits: [],
       outfitSortKey: '',
       outfitAsc: true,
@@ -195,7 +195,6 @@ ready(() => {
       changeSkillSearch() {
         this.type = 'skill';
         this.error = '';
-        [this.query, this.queryBk] = [this.queryBk, this.query];
       },
       isOutfitSearch() {
         return this.type === 'outfit';
@@ -203,18 +202,13 @@ ready(() => {
       changeOutfitSearch() {
         this.type = 'outfit';
         this.error = '';
-        [this.query, this.queryBk] = [this.queryBk, this.query];
-      },
-      search() {
-        if (this.isSkillSearch()) return this.searchSkill();
-        if (this.isOutfitSearch()) return this.searchOutfit();
       },
       searchSkill() {
-        this.query = this.query.trim();
+        this.skillQuery = this.skillQuery.trim();
         if (this.isLoading) {
           return;
         }
-        if (!this.query && (this.styles.length < 1 || this.styles.length === STYLES.length)) {
+        if (!this.skillQuery && (this.styles.length < 1 || this.styles.length === STYLES.length)) {
           this.error = '検索ワードを入力するか、スタイルを選択してください。';
           return;
         }
@@ -224,8 +218,8 @@ ready(() => {
           'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
         );
         url.searchParams.append('type', this.type);
-        if (this.query) {
-          url.searchParams.append('query', this.query);
+        if (this.skillQuery) {
+          url.searchParams.append('query', this.skillQuery);
         }
         if (this.styles.length != STYLES.length) {
           this.styles.forEach((style) => url.searchParams.append('styles', style));
@@ -338,11 +332,11 @@ ready(() => {
         };
       },
       searchOutfit() {
-        this.query = this.query.trim();
+        this.outfitQuery = this.outfitQuery.trim();
         if (this.isLoading) {
           return;
         }
-        if (!this.query) {
+        if (!this.outfitQuery) {
           this.error = '検索ワードを入力してください。';
           return;
         }
@@ -352,7 +346,7 @@ ready(() => {
           'https://script.google.com/macros/s/AKfycbwbeP5W2JqLRvbySz3sr2i_S5MEedkgBdayOsrIX0M13KCw7Xfo/exec'
         );
         url.searchParams.append('type', this.type);
-        url.searchParams.append('query', this.query);
+        url.searchParams.append('query', this.outfitQuery);
         if (
           !this.bookOption.isAllChecked &&
           this.bookOption.items.some((skillType) => skillType.checked)
