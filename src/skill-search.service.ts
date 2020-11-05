@@ -36,7 +36,7 @@ export class SkillSearchService {
     return groupBy(result, SkillSearchService.groupKey).map(
       (group): Skill => {
         return {
-          ...group[0],
+          ...group[group.length - 1],
           searchRefs: group.map((skill) => skill.searchRefs).join(','),
         };
       }

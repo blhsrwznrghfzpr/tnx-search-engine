@@ -114,7 +114,7 @@ describe('skill-search.service', () => {
       };
       const expected: Skill[] = [
         {
-          id: 3,
+          id: 4,
           name: '技能K2',
           ruby: '',
           style: 'カブキ',
@@ -153,7 +153,7 @@ describe('skill-search.service', () => {
       };
       const expected: Skill[] = [
         {
-          id: 1,
+          id: 5,
           name: '技能B1',
           ruby: 'ヨミb1',
           style: 'バサラ',
